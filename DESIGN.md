@@ -175,6 +175,7 @@ The palette reads as neutral paper and ink with restrained earthy controls. The 
 
 - **Display:** Frontmatter `display` governs the desktop homepage title. It becomes 60px at 1050px and below, then 50px/1.12 at 680px and below.
 - **Headline:** Frontmatter `headline` governs chapter headings; narrow-screen headings become 44px.
+- **Chapter number label:** Chapter pages display “CHAPTER X” above the title using uppercase transformation of the existing 15px muted Source Sans 3 label style, with tabular numerals and an 8px gap below.
 - **Section:** Frontmatter `section` governs section headings; narrow-screen headings become 29px. The homepage contents heading has its own 39px, 35px, and 31px responsive treatment.
 - **Chapter title:** Frontmatter `chapter-title` governs contents rows; the middle breakpoint uses 26px and the narrow breakpoint 23px.
 - **Body:** Frontmatter `body` governs ordinary text; narrow screens use 17px. Long policy prose is capped at 70ch.

@@ -34,3 +34,5 @@ The user explicitly superseded the approved mockup row geometry and theme dropdo
 On 2026-10-09, the user requested chapter reading and survey pages match the homepage width. Both now share the 1208px maximum page shell with 32px desktop side gutters and 20px side gutters at 680px and below. Policy pages retain their existing narrow shell; survey behavior is unchanged.
 
 On 2026-10-09, the user requested the mobile boxed number rating choices at every screen size. The 48px minimum-height outlined tiles now appear in one row of eleven on desktop, retaining six choices followed by five centered choices at 680px and below. Native radio selection, keyboard focus, endpoint labels, and explicit submission remain required.
+
+On 2026-10-09, the user requested a smaller chapter number label above each chapter title, then requested uppercase display as “CHAPTER X”. The label uses uppercase transformation of the existing 15px muted sans-serif style, with tabular numerals and an 8px gap before the title.

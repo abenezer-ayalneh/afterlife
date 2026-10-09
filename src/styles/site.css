@@ -11,4 +11,6 @@
 
 .reader-form .comment-label{margin-bottom:0}.character-count{text-align:right;font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums;margin:4px 0 20px}
 
+.chapter-rating .chapter-number{margin-bottom:8px;text-transform:uppercase}
+
 .site-header .site-name{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}.site-logo{display:block;width:32px;height:32px}
