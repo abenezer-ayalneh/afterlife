@@ -1,5 +1,5 @@
 import type {APIRoute} from 'astro';
-import {env} from 'cloudflare:workers';
+import {env} from '../../../lib/runtime';
 import {sameOrigin,readBody} from '../../../lib/security';
 import {manage,exportCSV} from '../../../lib/admin';
 import {Problem} from '../../../lib/model';

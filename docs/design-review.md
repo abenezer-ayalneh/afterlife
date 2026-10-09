@@ -28,7 +28,7 @@ Standalone generated assets: `assets/plates/ink-study.png` and `assets/plates/in
 
 The selected composition was expanded into chapter designs and desktop/mobile/light/dark treatments with a standalone ink illustration. The visual implementation checkpoint is now approved. The working staging website must still be reviewed before public launch.
 
-Preserve the accepted survey question and endpoint labels. Mockup artwork must become a standalone generated asset; do not ship a crop containing raster UI text. All text and controls must be semantic, accessible HTML. Final fonts must be locally served and licensed. Placeholder chapter labels will be replaced with the supplied titles without changing numbered routes.
+Preserve the accepted survey question and endpoint labels. Mockup artwork must become a standalone generated asset; do not ship a crop containing raster UI text. All text and controls must be semantic, accessible HTML. Final fonts must be locally served and licensed. The eleven official titles supplied on 2026-10-09 now replace the provisional labels without changing existing numbered routes. The original mockups below remain historical approval records.
 
 ## Initial visual checks
 

@@ -1,5 +1,5 @@
 ---
-import {env} from 'cloudflare:workers';
+import {env} from '../../lib/runtime';
 import Shell from '../../layouts/Shell.astro';
 import {chapters,results} from '../../lib/db';
 const index=await chapters(env.DB);const comparisons=await Promise.all(index.map(async item=>({...item,...await results(env.DB,item.id)})));

@@ -1,0 +1,8 @@
+# Optional maintenance utilities; the application runs natively on the VPS.
+FROM node:24.21.0-bookworm-slim
+WORKDIR /app
+COPY scripts/database.mjs ./scripts/
+COPY src/lib/sqlite-core.mjs ./src/lib/
+COPY migrations ./migrations
+USER node
+ENTRYPOINT ["node", "scripts/database.mjs"]

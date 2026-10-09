@@ -1,5 +1,5 @@
 ---
-import {env} from 'cloudflare:workers';
+import {env} from '../lib/runtime';
 import {isLocal} from '../lib/security';
 interface Props{action:string}
 const {action}=Astro.props;

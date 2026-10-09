@@ -1,10 +1,11 @@
 import { defineMiddleware } from 'astro:middleware';
-import { env } from 'cloudflare:workers';
-import { reader, administrator } from './lib/security';
+import { env } from './lib/runtime';
+import { reader, administrator, canonicalRequest } from './lib/security';
 import { Problem, escapeHTML } from './lib/model';
 
 export const onRequest=defineMiddleware(async(context,next)=>{
   try {
+    if (!import.meta.env.DEV) canonicalRequest(context.request,env);
     if(context.url.pathname==='/admin' || context.url.pathname.startsWith('/admin/')) context.locals.admin=await administrator(context.request,env);
     context.locals.owner=await reader(context);
     const response=await next();

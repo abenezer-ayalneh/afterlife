@@ -15,3 +15,8 @@ test-results/
 .impeccable/build/
 .impeccable/review/
 .impeccable/questions/
+
+.data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm

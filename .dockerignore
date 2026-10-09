@@ -1,0 +1,16 @@
+node_modules
+dist
+.git
+.astro
+.data
+.wrangler
+.ui-preview
+.env
+.env.*
+.dev.vars*
+*.sqlite*
+assets
+docs
+.impeccable
+tests
+deploy

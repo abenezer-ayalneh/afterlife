@@ -1,12 +1,6 @@
-import {readFile} from 'node:fs/promises';
-const target=process.argv[2];if(!['staging','production'].includes(target))throw new Error('Choose staging or production.');
-const config=JSON.parse(await readFile(new URL('../wrangler.jsonc',import.meta.url),'utf8'));const environment=config.env[target];const vars=environment.vars;
-const required=['PUBLIC_ORIGIN','TURNSTILE_SITE_KEY','ACCESS_TEAM_DOMAIN','ACCESS_AUD','ADMIN_EMAIL'];
-const missing=required.filter(key=>!vars[key]);
-if(!environment.d1_databases[0].database_id || environment.d1_databases[0].database_id.startsWith('00000000-'))missing.push('real D1 database ID');
-if(missing.length)throw new Error(`Configure ${target} before deployment: ${missing.join(', ')}.`);
-const origin=new URL(vars.PUBLIC_ORIGIN);if(origin.protocol!=='https:'||origin.origin!==vars.PUBLIC_ORIGIN)throw new Error('PUBLIC_ORIGIN must be a canonical HTTPS origin without a path or trailing slash.');
-if(!/^[a-z\d-]+\.cloudflareaccess\.com$/.test(vars.ACCESS_TEAM_DOMAIN))throw new Error('Use the Cloudflare Access team hostname.');
-if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vars.ADMIN_EMAIL))throw new Error('Configure one administrator email.');
-if(vars.APP_ENV!==target)throw new Error('Environment must match build target.');
-console.log(`${target} configuration is ready for packaging. Verify TURNSTILE_SECRET_KEY and RATE_LIMIT_SALT in the target secret store before deployment.`);
+import {validateConfig} from '../src/lib/config.mjs';
+const target=process.argv[2];
+if(!['staging','production'].includes(target)) throw new Error('Choose staging or production.');
+const config=validateConfig(process.env);
+if(config.APP_ENV!==target) throw new Error('APP_ENV must match the target.');
+console.log(`${target} environment configuration validated. Verify migrations, Nginx, TLS, Access and Turnstile before launch.`);

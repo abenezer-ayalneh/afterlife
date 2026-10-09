@@ -1,17 +1,22 @@
 {
   "name": "afterlife",
   "version": "1.0.0",
-  "description": "Chapter persuasiveness survey for An Afterlife for Atheists",
+  "description": "Chapter persuasiveness survey for Ubuntu, Node and SQLite",
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
     "build": "astro check && astro build",
     "check": "astro check",
     "preview": "astro preview --host 127.0.0.1",
-    "types": "wrangler types --strict-vars false",
-    "db:local": "wrangler d1 migrations apply DB --local",
+    "db:local": "node scripts/database.mjs migrate .data/local.sqlite",
     "test": "tsx --test tests/*.test.ts",
-    "build:staging": "CLOUDFLARE_ENV=staging astro build",
-    "build:production": "CLOUDFLARE_ENV=production astro build"
+    "build:staging": "astro check && node scripts/build-release.mjs staging",
+    "build:production": "astro check && node scripts/build-release.mjs production",
+    "db:migrate": "node scripts/database.mjs migrate",
+    "start": "node scripts/start.mjs",
+    "preflight": "node scripts/preflight.mjs",
+    "verify:recovery": "node scripts/verify-recovery.mjs",
+    "smoke": "node scripts/smoke-test.mjs",
+    "package:release": "node scripts/package-release.mjs"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +24,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@astrojs/cloudflare": "^14.3.4",
+    "@astrojs/node": "^11.1.7",
     "@fontsource/source-sans-3": "^5.3.0",
     "@fontsource/wittgenstein": "^5.3.0",
     "astro": "^7.3.8",
@@ -28,9 +33,10 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@types/node": "^24.19.1",
-    "miniflare": "^5.20261006.1-alpha",
     "tsx": "^4.23.15",
-    "typescript": "^6.0.3",
-    "wrangler": "^4.149.0"
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.21.0"
   }
 }

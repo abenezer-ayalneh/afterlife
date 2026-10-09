@@ -2,13 +2,17 @@
 
 Verified locally on 2026-10-09. The user approved the mockups on this date. Public staging and production have not been provisioned or approved for launch.
 
-## Automated checks
+## Automated checks — native VPS migration
 
-- `npm run build`: Astro diagnostics for 28 files, zero errors, warnings, or hints; server build succeeded.
-- `npm test`: 15 integration tests passed against the local Cloudflare D1 runtime. Coverage includes rating boundaries, replacement, delayed retries, concurrent revisions, comment ownership, Unicode, pagination, reports/moderation, immutable chapter addresses, CSV escaping, administrator JWT rejection, rate limits, and Turnstile failures.
-- `node scripts/verify-recovery.mjs`: isolated SQL export/restore preserved chapters, ratings, and Unicode comments. Application data was untouched.
-- `npm exec wrangler deploy -- --dry-run`: generated Worker package and bindings validated locally; no deployment performed. Placeholder cloud bindings remain unsuitable for publication.
-- Impeccable detector on `src`: no findings. Independent finish review is recorded separately when complete.
+- `npm run check`: Astro diagnostics passed with zero errors, warnings or hints.
+- `npm test`: 22 tests passed against actual isolated SQLite databases. Coverage includes migrations/reruns/rollback, rating boundaries/conflicts/retries, transaction rollback, comment ownership/Unicode/pagination, reports/moderation, immutable chapter addresses, CSV escaping/snapshots, both administrator identities and JWT rejection, deployment configuration, canonical proxy headers, secure cookies, network limits and Turnstile failures.
+- `npm run build:staging`: standalone Node build passed for the staging hostname.
+- `npm run smoke`: the built Node server passed local HTTP checks for all eleven chapters, health, privacy/guidelines, static assets, HTTPS reconstruction, secure cookies, hostile proxy headers, unauthorized admin/API denial, missing Turnstile tokens, and persistent rating/comment mutations. Outbound Turnstile responses are mocked only in this test child process; live Cloudflare behavior is still a deployment-time check.
+- `npm run verify:recovery`: isolated SQLite backup/restore preserved schema, migration ledger, chapters, ratings, Unicode comments and chapter immutability. Application data was untouched.
+- `npm run package:release`: created the native deployment archive without secrets or response data.
+- `node scripts/build-preview.mjs`: isolated Vercel static preview built all eleven chapter pages. It remains disconnected from the live database and submissions.
+- Optional Docker tools build attempted locally but Docker Hub authorization failed with a DNS timeout for `auth.docker.io`. The Docker utility image is supplied but not verified. Nginx is not installed locally; its supplied configuration must pass `nginx -t` on the actual VPS before reload. PM2 startup and live origin trust must also be verified there.
+- No remote configuration, cloud provisioning or deployment was performed. Existing design-review records below remain separate from the migration checks.
 
 ## Browser evidence
 
@@ -24,10 +28,20 @@ The last screenshot batch exposed three invalid browser full-page stitched image
 
 ## Required staging checks
 
-The user confirmed on 2026-10-09 that the domain is not ready. Configure real Cloudflare resources, the purchased domain, administrator allowlist, and Turnstile keys before publishing staging. Verify actual emailed administrator sign-in, full management flows, server-side Turnstile tokens, canonical and alternate host authorization, operational limits, and desktop/mobile accessibility against the deployed service. These local checks do not establish WCAG conformance or production readiness. Obtain the user's working-site approval before production publication.
+The temporary staging hostname is `afterlife.abenezer-ayalneh.dev`, proxied by Cloudflare to the GoDaddy Ubuntu VPS. Complete the setup in docs/operations.md: live Access and Turnstile credentials, both equal administrator identities, origin TLS, Nginx peer restrictions, native PM2 runtime and reboot persistence. Verify real emailed administrator sign-in, management flows, live Turnstile tokens/replay rejection, canonical and direct-origin denial, operational limits, and mobile/desktop accessibility. These local checks do not establish WCAG conformance or production readiness. Obtain the user's working-site approval before production publication; production starts with a separate clean database and final domain.
 
 ## Spacing and theme refinement
 
 The three requested changes were verified on desktop in both themes, at 390px mobile width, and on a 320px chapter header. Row minimum heights doubled to 90px/124px; measured title-center offsets were zero apart from subpixel rounding. Footer gaps are 84px/64px. All icon targets are 44px square. Keyboard activation, persisted Dark selection after reload, and System preference matching the operating-system theme were checked. No horizontal overflow was observed at these widths. The mobile footer was captured separately in `spacing-mobile-footer.png`; the mobile top captures are viewport evidence, not full-page images.
 
 The final application build passed with zero errors, warnings, or hints. The detector reports only existing advisory typography-token differences; no blocking findings. Separate refinement reviewer and documenter agents stopped at an account usage limit, so the scoped finish review and design-record update were completed directly. See `.impeccable/review/spacing-finish-review.md`. Previously documented full-build gates and staging requirements remain open.
+
+## Official eleven chapters — 2026-10-09
+
+The official titles and ordering are recorded in PRODUCT.md. Migration 0004 was applied successfully to the local D1 database. An isolated SQLite migration check confirmed eleven chapter records and preservation of existing ratings and comments. The static preview build generated all eleven chapter pages; generated HTML checks verified every title, homepage link, and previous/next link. The book-link generator outputs all eleven named routes.
+
+At the chapter-update checkpoint, the full integration suite and Astro check could not run: concurrent dependency changes removed Miniflare, Wrangler, and the Cloudflare adapter. The local migration ran using an isolated npx Wrangler invocation. No remote migration or deployment was performed. The native migration checks above supersede that earlier tooling limitation.
+
+## Minimal deployment checklist revision
+
+Node 22.19 was verified with all 22 tests and the built-server smoke checks; its SQLite experimental warning is expected. The package accepts Node 22.19+ in Node 22 and Node 24.21+ in Node 24. The deployment guide now uses a numbered checklist, the existing deployment account/PM2 installation, and Certbot-issued Let's Encrypt certificates. Nginx includes both an HTTP certificate bootstrap and a final HTTPS proxy with persistent challenge paths. No VPS configuration or certificate issuance was performed; live `nginx -t` and Certbot renewal checks remain required.

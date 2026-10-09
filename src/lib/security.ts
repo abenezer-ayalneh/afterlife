@@ -2,7 +2,8 @@ import type { APIContext } from 'astro';
 import { createRemoteJWKSet, jwtVerify, type JWTVerifyGetKey } from 'jose';
 import { Problem } from './model';
 
-export type Runtime = Cloudflare.Env & {TURNSTILE_SECRET_KEY?:string;RATE_LIMIT_SALT?:string};
+import type { Runtime } from './runtime';
+export type { Runtime } from './runtime';
 const localHosts = new Set(['localhost','127.0.0.1','[::1]']);
 export function isLocal(request:Request,env:Runtime) { return !!import.meta.env?.DEV && env.APP_ENV==='local' && localHosts.has(new URL(request.url).hostname); }
 export async function hash(value:string) {
@@ -19,6 +20,19 @@ export async function reader(context:APIContext) {
   }
   return hash(value);
 }
+// Nginx overwrites these headers and the container port is loopback-only.
+// Reject contradictory values even if the adapter drops an invalid forwarded host.
+export function canonicalRequest(request:Request,env:Runtime) {
+  const origin=new URL(env.PUBLIC_ORIGIN);
+  if(new URL(request.url).origin!==origin.origin) throw new Problem(403,'Please use the website’s main address.');
+  for(const name of ['host','x-forwarded-host']) {
+    const value=request.headers.get(name);
+    if(value && value!==origin.host) throw new Problem(403,'Please use the website’s main address.');
+  }
+  const protocol=request.headers.get('x-forwarded-proto');
+  const port=request.headers.get('x-forwarded-port');
+  if((protocol && protocol!==origin.protocol.slice(0,-1)) || (port && port!==(origin.port||'443')) || request.headers.has('forwarded')) throw new Problem(403,'Please use the website’s main address.');
+}
 export function sameOrigin(request:Request,env:Runtime) {
   const url=new URL(request.url);
   if(!isLocal(request,env) && (!env.PUBLIC_ORIGIN || url.origin!==env.PUBLIC_ORIGIN)) throw new Problem(403,'Please use the website’s main address.');
@@ -27,14 +41,14 @@ export function sameOrigin(request:Request,env:Runtime) {
   if(site && site!=='same-origin' && site!=='none') throw new Problem(403,'Please submit this form from the website.');
 }
 export async function administrator(request:Request,env:Runtime,verificationKeys?:JWTVerifyGetKey) {
-  if(!env.PUBLIC_ORIGIN || new URL(request.url).origin!==env.PUBLIC_ORIGIN || !env.ADMIN_EMAIL || !env.ACCESS_AUD || !/^[a-z\d-]+\.cloudflareaccess\.com$/.test(env.ACCESS_TEAM_DOMAIN)) throw new Problem(403,'Administrator access is not configured for this address.');
+  if(!env.PUBLIC_ORIGIN || new URL(request.url).origin!==env.PUBLIC_ORIGIN || !env.ADMIN_EMAILS.length || !env.ACCESS_AUD || !/^[a-z\d-]+\.cloudflareaccess\.com$/.test(env.ACCESS_TEAM_DOMAIN)) throw new Problem(403,'Administrator access is not configured for this address.');
   const token=request.headers.get('cf-access-jwt-assertion');
   if(!token) throw new Problem(401,'Please sign in through the administrator email code.');
   try {
     const issuer=`https://${env.ACCESS_TEAM_DOMAIN}`;
     const keys=verificationKeys||createRemoteJWKSet(new URL(`${issuer}/cdn-cgi/access/certs`),{timeoutDuration:5000});
     const {payload}=await jwtVerify(token,keys,{issuer,audience:env.ACCESS_AUD,algorithms:['RS256'],requiredClaims:['exp','iat','email','sub'],clockTolerance:5});
-    if(typeof payload.email!=='string' || payload.email.toLowerCase()!==env.ADMIN_EMAIL.toLowerCase() || payload.type!=='app') throw new Error('Invalid account');
+    if(typeof payload.email!=='string' || !env.ADMIN_EMAILS.includes(payload.email.toLowerCase()) || payload.type!=='app') throw new Error('Invalid account');
     return payload.email;
   } catch { throw new Problem(403,'Your administrator session could not be verified. Please sign in again.'); }
 }

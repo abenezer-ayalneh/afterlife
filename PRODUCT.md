@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Delegated by the user and settled in the approved development plan: Astro, TypeScript, native CSS, small client-side scripts, Cloudflare Workers, D1, Cloudflare Access for one administrator, and Turnstile for public submissions.
+Delegated by the user and settled in the approved development plan: Astro, TypeScript, native CSS, small client-side scripts, native Node 24 under PM2 on the Ubuntu VPS, SQLite, Cloudflare Access for two equal administrators, and Turnstile for public submissions.
 
 ## Users
 
@@ -20,11 +20,11 @@ Collect readers' assessments of each chapter's persuasiveness regarding the exis
 
 ## Positioning
 
-This is a survey for one specific book, initially containing nine chapters. A chapter rating measures the persuasiveness of that chapter, not overall belief, belief change, or writing quality. The website welcomes different viewpoints and does not make claims about whether an afterlife exists.
+This is a survey for one specific book, initially containing eleven chapters. A chapter rating measures the persuasiveness of that chapter, not overall belief, belief change, or writing quality. The website welcomes different viewpoints and does not make claims about whether an afterlife exists.
 
 ## Operating Context
 
-Readers follow durable numbered chapter links from the book. Chapter names will be supplied later; use Chapter 1 through Chapter 9 initially. The homepage provides a short introduction and chapter index. Expect gradual readership of up to a few hundred visitors daily initially.
+Readers follow durable numbered chapter links from the book. The eleven official chapter titles are supplied and used in reading order. The homepage provides a short introduction and chapter index. Expect gradual readership of up to a few hundred visitors daily initially.
 
 ## Capabilities and Constraints
 
@@ -39,7 +39,7 @@ Readers follow durable numbered chapter links from the book. Chapter names will 
 - Chapter identifiers and published URLs remain stable when titles change.
 - English interface; comments may be in any language. No reader accounts, demographics, advertising analytics, or book purchase flow.
 - Defaults: plain-text comments up to 2,000 characters, names up to 60 characters, newest-first comments paginated 20 at a time.
-- Target free hosting tiers; the user plans to purchase a dedicated domain separately. No fixed deadline.
+- Use the existing 2 GB GoDaddy Ubuntu VPS and Nginx, with Cloudflare proxying the temporary staging domain. A dedicated production domain will be supplied later. No fixed deadline.
 
 ## Brand Commitments
 
@@ -47,7 +47,7 @@ Use the exact title “An Afterlife for Atheists.” The user selected a restrai
 
 ## Evidence on Hand
 
-The user supplied the title, chapter count, purpose, and approved requirements. No manuscript, official chapter titles, book cover, author biography, public domain, or administrator email has been supplied. Do not fabricate these or production survey responses. Demonstration data must be labeled.
+The user supplied the title, chapter count, purpose, and approved requirements. The eleven official chapter titles have been supplied. The temporary staging domain is afterlife.abenezer-ayalneh.dev. Authorized administrator emails are abenezer.ayalneh.42@gmail.com and boersarama@gmail.com, with equal permissions. No manuscript, book cover, author biography, or final production domain has been supplied. Do not fabricate these or production survey responses. Demonstration data must be labeled.
 
 ## Product Principles
 
@@ -64,3 +64,17 @@ Target WCAG 2.2 AA, including keyboard access, visible focus, screen-reader labe
 ## Delivery Checkpoints
 
 The user requires approval of mockups, illustration, and copy before UI implementation, then approval of the working staging site before public launch. Intermediate development phases continue when their agreed verification passes. The user selected image mockups before code.
+
+## Official Chapters
+
+1. Religion
+2. Philosophy
+3. Out-of-Body Experiences
+4. Near-Death Experiences
+5. Children's Past Lives
+6. Adults' Past Lives
+7. End-of-Life Phenomena
+8. After Death Encounters
+9. Agents of the Dead (Mediums)
+10. Mystica
+11. Consciousness

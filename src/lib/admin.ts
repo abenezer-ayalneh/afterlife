@@ -1,6 +1,7 @@
+import type { Database } from './sqlite';
 import {integer,text,requestId,csvCell,Problem} from './model';
 
-export async function manage(db:D1Database,action:string,body:Record<string,unknown>){
+export async function manage(db:Database,action:string,body:Record<string,unknown>){
   if(action==='rename'){
     const id=integer(body.chapter,1,100000,'Invalid chapter.');const title=text(body.title,200);
     const changed=await db.prepare('UPDATE chapters SET title=? WHERE id=?').bind(title,id).run();if(!changed.meta.changes)throw new Problem(404,'Chapter not found.');return;
@@ -22,7 +23,7 @@ export async function manage(db:D1Database,action:string,body:Record<string,unkn
   }
   throw new Problem(404,'Management action not found.');
 }
-export async function exportCSV(db:D1Database,kind:string):Promise<Response>{
+export async function exportCSV(db:Database,kind:string):Promise<Response>{
   const rating=kind==='ratings';if(!rating&&kind!=='comments')throw new Problem(404,'Export not found.');
   const fields=rating?['chapter_id','chapter_title','score','created_at','updated_at']:['id','chapter_id','chapter_title','author','body','hidden','created_at','updated_at'];
   const job=crypto.randomUUID(),now=Math.floor(Date.now()/1000);
