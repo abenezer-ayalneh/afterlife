@@ -37,3 +37,7 @@ Implementation is local. No Cloudflare account resources, public staging site or
 The UUIDs and empty variables in `wrangler.jsonc` are deliberate placeholders. Do not deploy them. Run `node scripts/preflight.mjs staging` or `production` before packaging a real environment. Deployment, recovery, moderation and usage procedures are in [docs/operations.md](docs/operations.md). Generate the nine final book links after launch with `node scripts/chapter-links.mjs https://your-approved-domain`.
 
 See [PRODUCT.md](PRODUCT.md), [CONTEXT.md](CONTEXT.md), [docs/development-plan.md](docs/development-plan.md), and [docs/design-review.md](docs/design-review.md). Historical generated mockups retain the earlier book title; all shipped text uses **An Afterlife for Atheists**.
+
+## Vercel UI preview
+
+Vercel uses `vercel.json` to run `node scripts/build-preview.mjs`. This generates static copies of the homepage, nine chapter pages, privacy, and guidelines in `dist/`. The isolated build uses the initial chapter titles and empty results, excludes admin/API routes, and displays a preview message when a form is submitted. It does not connect to D1 or save ratings/comments. The normal Astro build still targets Cloudflare.
