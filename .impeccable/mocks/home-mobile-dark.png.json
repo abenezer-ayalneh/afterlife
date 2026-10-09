@@ -1,0 +1,10 @@
+{
+  "prompt": "Use case: ui-mockup, dark-theme variant. Recolor this EXACT mobile page to dark mode. Preserve the same portrait aspect ratio, same viewport crop, every layout position, scale, spacing, typography, and ALL text. Change the selector to \"Theme: Dark\". Solid charcoal #20231F ground, warm near-white #F0EEE5 body/headings, secondary #B7B9AF, sage #BFCCA8 links and selected action fill. On the chapter survey, button background is pale sage with charcoal text; all ELEVEN score choices 0 through 10 stay UNSELECTED with visible pale gray outlines. Do not add controls or numbers. If the source is the homepage, keep the abstract ink composition exactly, translated to translucent gray/sage washes and delicate pale lines, never a neon glow. No new elements, illustration on chapter page, slogans, gradients, vignette, devices or browser frames. It is the same website in a comfortable high-contrast dark theme.",
+  "tool": "built-in image_gen",
+  "approved": true,
+  "source": "/Users/abeni/.codex/generated_images/01a11f7f-f20b-7d43-8e0c-463db7f98991/exec-0f0b227c-2489-44de-83be-d960fd89f8b1.png",
+  "reference": "/Users/abeni/Documents/projects/upwork/afterlife/.impeccable/mocks/home-mobile-light-v2.png",
+  "approvalSource": "User: I approve the mockups",
+  "approvalDate": "2026-10-09",
+  "approvalScope": "Visual mockups and interface wording; public launch requires a separate working-site review"
+}

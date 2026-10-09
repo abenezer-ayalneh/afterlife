@@ -1,0 +1,33 @@
+# Verification record
+
+Verified locally on 2026-10-09. The user approved the mockups on this date. Public staging and production have not been provisioned or approved for launch.
+
+## Automated checks
+
+- `npm run build`: Astro diagnostics for 28 files, zero errors, warnings, or hints; server build succeeded.
+- `npm test`: 15 integration tests passed against the local Cloudflare D1 runtime. Coverage includes rating boundaries, replacement, delayed retries, concurrent revisions, comment ownership, Unicode, pagination, reports/moderation, immutable chapter addresses, CSV escaping, administrator JWT rejection, rate limits, and Turnstile failures.
+- `node scripts/verify-recovery.mjs`: isolated SQL export/restore preserved chapters, ratings, and Unicode comments. Application data was untouched.
+- `npm exec wrangler deploy -- --dry-run`: generated Worker package and bindings validated locally; no deployment performed. Placeholder cloud bindings remain unsuitable for publication.
+- Impeccable detector on `src`: no findings. Independent finish review is recorded separately when complete.
+
+## Browser evidence
+
+The implementation was captured on desktop, at 1280px, at 390px, and at 320px in the supported themes. Empty chapter pages show no selected score and “No ratings yet.” All eleven rating choices fit at 320px without horizontal scrolling. Accessible snapshots expose the survey question, radio labels, distribution values, form labels, and chapter navigation.
+
+Local browser submissions confirmed that score zero persists, revision to ten keeps one response, and a separate Unicode comment persists after reload. Editing that comment saved successfully. A subsequent rating update retained the smaller `/ 10` unit and one response. These entries remain labeled development data and will not be imported into production.
+
+## Design review
+
+The independent Impeccable reviewer scored five visual/state findings resolved after two correction batches. The complete viewport scores approximately 92% against composition B. Its measured hero gate remains open for a footer-separator position reading; the original surface-seed receipt is unavailable and remains an honest provenance limitation. Subsequent workflow phases are not marked complete or forcibly advanced. See `.impeccable/review/finish-review.md` and `.impeccable/build/state.json`. Final disposition: `fix`, limited to these outstanding workflow findings. `DESIGN.md` and `.impeccable/design.json` document the implemented system.
+
+The last screenshot batch exposed three invalid browser full-page stitched images; they were replaced with direct captures before final review. Desktop homepage comparison is 1536×1024, additional desktop is 1280×1040, and the normal 1101px viewport is recorded separately. Chapter and mobile full-page captures were valid.
+
+## Required staging checks
+
+The user confirmed on 2026-10-09 that the domain is not ready. Configure real Cloudflare resources, the purchased domain, administrator allowlist, and Turnstile keys before publishing staging. Verify actual emailed administrator sign-in, full management flows, server-side Turnstile tokens, canonical and alternate host authorization, operational limits, and desktop/mobile accessibility against the deployed service. These local checks do not establish WCAG conformance or production readiness. Obtain the user's working-site approval before production publication.
+
+## Spacing and theme refinement
+
+The three requested changes were verified on desktop in both themes, at 390px mobile width, and on a 320px chapter header. Row minimum heights doubled to 90px/124px; measured title-center offsets were zero apart from subpixel rounding. Footer gaps are 84px/64px. All icon targets are 44px square. Keyboard activation, persisted Dark selection after reload, and System preference matching the operating-system theme were checked. No horizontal overflow was observed at these widths. The mobile footer was captured separately in `spacing-mobile-footer.png`; the mobile top captures are viewport evidence, not full-page images.
+
+The final application build passed with zero errors, warnings, or hints. The detector reports only existing advisory typography-token differences; no blocking findings. Separate refinement reviewer and documenter agents stopped at an account usage limit, so the scoped finish review and design-record update were completed directly. See `.impeccable/review/spacing-finish-review.md`. Previously documented full-build gates and staging requirements remain open.

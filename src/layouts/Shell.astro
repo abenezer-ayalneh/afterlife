@@ -1,0 +1,29 @@
+---
+import '@fontsource/wittgenstein/latin-400.css';
+import '@fontsource/source-sans-3/latin-400.css';
+import '@fontsource/source-sans-3/latin-600.css';
+import '../styles/site.css';
+import {BOOK_TITLE} from '../lib/model';
+interface Props {title?:string;home?:boolean;narrow?:boolean}
+const {title,home=false,narrow=false}=Astro.props;
+---
+<!doctype html><html lang="en"><head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="A chapter-by-chapter reader survey on the book’s case for the existence of an afterlife." />
+  <title>{title?`${title} · ${BOOK_TITLE}`:BOOK_TITLE}</title><link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script is:inline>(()=>{let t='system';try{t=localStorage.getItem('theme')||'system'}catch{}if(!['light','dark','system'].includes(t))t='system';document.documentElement.dataset.preference=t;document.documentElement.dataset.theme=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t})();</script>
+</head><body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class:list={['page-shell',{narrow}]}><header class="site-header"><a class:list={['site-name',{'home-name':home}]} href="/">{home?'Reader survey':BOOK_TITLE}</a><div class="theme-control" role="group" aria-label="Color theme">
+    <button type="button" class="theme-option" data-theme-choice="light" aria-label="Light theme" aria-pressed="false" title="Light theme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" /></svg></button>
+    <button type="button" class="theme-option" data-theme-choice="system" aria-label="System theme" aria-pressed="false" title="System theme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2" /><path d="M12 17v4m-4 0h8" /></svg></button>
+    <button type="button" class="theme-option" data-theme-choice="dark" aria-label="Dark theme" aria-pressed="false" title="Dark theme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.7 13.2A9 9 0 0 1 10.8 3.3 9 9 0 1 0 20.7 13.2Z" /></svg></button>
+  </div></header>
+  <main id="main"><slot /></main><footer class="site-footer"><a href="/privacy">Privacy</a><span aria-hidden="true">|</span><a href="/guidelines">Commenting guidelines</a></footer></div>
+  <script>
+    const controls=document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]');const system=matchMedia('(prefers-color-scheme: dark)');
+    function apply(t:string){document.documentElement.dataset.preference=t;document.documentElement.dataset.theme=t==='system'?(system.matches?'dark':'light'):t;controls.forEach(control=>control.setAttribute('aria-pressed',String(control.dataset.themeChoice===t)));try{localStorage.setItem('theme',t)}catch{}}
+    apply(document.documentElement.dataset.preference||'system');
+    controls.forEach(control=>control.addEventListener('click',()=>apply(control.dataset.themeChoice!)));system.addEventListener('change',()=>{if(document.documentElement.dataset.preference==='system')apply('system')});
+  </script>
+</body></html>

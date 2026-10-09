@@ -1,0 +1,9 @@
+---
+import type {Results} from '../lib/model';
+interface Props{data:Results}
+const {data}=Astro.props;const max=Math.max(1,...data.distribution);
+---
+<section id="results" class="results-section" aria-labelledby="results-title"><h2 id="results-title">Reader ratings</h2>
+  <dl class="results-summary"><div><dt>Average score</dt><dd id="average"><span data-average-value>{data.average===null?'—':data.average.toFixed(1)}</span><span class="out-of" hidden={data.average===null}> / 10</span></dd></div><div><dt>Responses</dt><dd id="response-count">{data.count}</dd></div></dl><p id="results-empty" class="muted" hidden={data.count!==0}>No ratings yet</p>
+  <div class="distribution" role="group" aria-label="Rating distribution">{data.distribution.map((count,score)=><div class="distribution-column"><span class="bar-count" aria-hidden="true">{count||''}</span><div class="bar-track"><div class="bar" style={`--bar-height:${count/max*100}%`}></div></div><span class="bar-score" aria-hidden="true">{score}</span><span class="sr-only" data-bar-label>Score {score}: {count} {count===1?'response':'responses'}</span></div>)}</div>
+</section>

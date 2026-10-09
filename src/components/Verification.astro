@@ -1,0 +1,8 @@
+---
+import {env} from 'cloudflare:workers';
+import {isLocal} from '../lib/security';
+interface Props{action:string}
+const {action}=Astro.props;
+const enabled=!isLocal(Astro.request,env);
+---
+{enabled && <div class="verification"><div class="turnstile-widget" data-sitekey={env.TURNSTILE_SITE_KEY} data-action={action}></div><noscript><p>Enable JavaScript to complete spam verification and submit this form.</p></noscript></div>}

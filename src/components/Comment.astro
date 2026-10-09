@@ -1,0 +1,13 @@
+---
+import type {Comment} from '../lib/model';
+import Verification from './Verification.astro';
+interface Props{item:Comment}
+const {item}=Astro.props;const date=new Date(item.created_at).toLocaleDateString('en',{year:'numeric',month:'short',day:'numeric',timeZone:'UTC'});
+---
+<article class="comment" id={`comment-${item.id}`}><header class="comment-header"><strong>{item.author||'Anonymous reader'}</strong><time datetime={item.created_at}>{date}</time>{item.updated_at!==item.created_at && <span class="muted">Edited</span>}</header><p class="comment-body">{item.body}</p>
+  <div class="comment-tools">
+    {item.owned && <details><summary>Edit</summary><form class="reader-form" method="post" action={`/api/comments/${item.id}/edit`} data-action="edit"><input type="hidden" name="version" value={item.version} /><label>Name or nickname (optional)<input name="author" maxlength="60" value={item.author||''} autocomplete="nickname" /></label><label>Comment<textarea name="body" rows="5" maxlength="2000" required>{item.body}</textarea></label><Verification action="edit" /><button type="submit">Save changes</button><p class="form-status" role="status" aria-live="polite"></p></form></details>}
+    {item.owned && <details><summary>Delete</summary><p>Your comment will be permanently removed.</p><form class="reader-form" method="post" action={`/api/comments/${item.id}/delete`} data-action="delete"><Verification action="delete" /><button type="submit" class="danger">Delete comment</button><p class="form-status" role="status" aria-live="polite"></p></form></details>}
+    <details><summary>Report</summary><form class="reader-form" method="post" action={`/api/comments/${item.id}/report`} data-action="report"><label>Reason for reporting<textarea name="reason" rows="3" maxlength="500" required></textarea></label><Verification action="report" /><button type="submit" class="secondary">Send report</button><p class="form-status" role="status" aria-live="polite"></p></form></details>
+  </div>
+</article>

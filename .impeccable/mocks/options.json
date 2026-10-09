@@ -1,0 +1,66 @@
+{
+  "title": "Afterlife for an Atheist",
+  "question": "Choose the homepage composition to carry into the light/dark and mobile chapter designs. These are visual mockups, not the working website.",
+  "options": [
+    {
+      "id": "a",
+      "label": "A · Centered introduction",
+      "thesis": "A centered book introduction above a compact chapter index.",
+      "palette": [
+        "#F5F3ED",
+        "#292B27",
+        "#596448"
+      ],
+      "materials": [
+        "Serif headings",
+        "Abstract ink",
+        "Fine rules"
+      ],
+      "viewport": "Title and small ink study lead into a three-column chapter index.",
+      "risk": "The introduction takes more attention before the chapter links.",
+      "comp": ".impeccable/mocks/home-a.png"
+    },
+    {
+      "id": "b",
+      "label": "B · Contents page",
+      "thesis": "A familiar numbered contents list with a small illustrated introduction.",
+      "palette": [
+        "#F5F3ED",
+        "#292B27",
+        "#596448"
+      ],
+      "materials": [
+        "Serif headings",
+        "Abstract ink",
+        "Fine rules"
+      ],
+      "viewport": "Title and illustration share the opening, followed by nine full-width chapter rows.",
+      "risk": "The vertical list takes more scrolling on a phone.",
+      "comp": ".impeccable/mocks/home-b.png"
+    },
+    {
+      "id": "c",
+      "label": "C · Chapter directory",
+      "thesis": "A horizontal introduction above three columns of chapter links.",
+      "palette": [
+        "#F5F3ED",
+        "#292B27",
+        "#596448"
+      ],
+      "materials": [
+        "Serif headings",
+        "Abstract ink",
+        "Fine rules"
+      ],
+      "viewport": "Title, illustration, and explanation form a shallow band above an open chapter directory.",
+      "risk": "The multiple columns need a deliberate reading order on mobile.",
+      "comp": ".impeccable/mocks/home-c.png"
+    }
+  ],
+  "reroll": true,
+  "steer": true,
+  "buildPath": {
+    "value": "comp",
+    "toggle": true
+  }
+}

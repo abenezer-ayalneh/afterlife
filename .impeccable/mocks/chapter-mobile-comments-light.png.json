@@ -1,0 +1,10 @@
+{
+  "prompt": "Use case: ui-mockup. Make the NEXT SCROLLED MOBILE VIEWPORT of the attached chapter survey, showing results and comments below the rating form. Keep the precise same visual identity and mobile scale: portrait 1024x1536 webpage, representing a390px phone. 65px image side margins; form labels/body~44imagepx; serif section titles~75imagepx; sans controls. No device frame. Do not repeat the header/title/rating controls because this is the lower portion of the page. Top starts with section heading \"Reader ratings\". Row of two summary labels \"Average score\" showing \"—\", and \"Responses\" showing \"0\". Under them, \"No ratings yet.\" Then a compact empty eleven-tick distribution axis labeled0,1,2,3,4,5,6,7,8,9,10 with no bars. Thin divider. Heading \"Comments\", subheading \"Leave a comment\". Label \"Name or nickname (optional)\" and empty full-width single-line input at least115imagepx high. Label \"Comment\" and empty full-width textarea about220imagepx high. Helper \"Comments are public. Names are not verified.\" Full-width moss button \"Post comment\" about125imagepx high, clean sans label. Thin divider then \"No comments yet.\" Bottom navigation \"All chapters\" left and \"Chapter 2 →\" right, footer \"Privacy\" and \"Commenting guidelines\" if space allows. Keep all controls comfortably readable and unfilled. Background warm off-white #F5F3ED, charcoal #292B27, moss #596448. No fake comments, avatars, counts except0, cards, illustration, slogans, ratings selected or extra controls. This is the blank launch state, not a populated survey.",
+  "tool": "built-in image_gen",
+  "approved": true,
+  "source": "/Users/abeni/.codex/generated_images/01a11f7f-f20b-7d43-8e0c-463db7f98991/exec-43cfd9d9-c337-4e2f-a146-fe8ca198062a.png",
+  "reference": "/Users/abeni/Documents/projects/upwork/afterlife/.impeccable/mocks/chapter-mobile-light.png",
+  "approvalSource": "User: I approve the mockups",
+  "approvalDate": "2026-10-09",
+  "approvalScope": "Visual mockups and interface wording; public launch requires a separate working-site review"
+}

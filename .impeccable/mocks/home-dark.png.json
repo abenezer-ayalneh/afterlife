@@ -1,0 +1,10 @@
+{
+  "prompt": "Use case: ui-mockup, precise dark-theme variant. Edit the provided approved homepage mockup into its DARK THEME. Keep exactly the same 1536x1024 page composition, title typography and scale, body copy, artwork geometry, nine full-width chapter rows, footer, spacing and alignment. Preserve all wording verbatim, except the top-right theme text becomes \"Theme: Dark\". Change only the theme palette: solid charcoal background #20231F, warm near-white main text #F0EEE5, muted secondary text #B7B9AF, sage link/arrows #BFCCA8, fine rules #454A40. Translate the artwork to translucent sage, warm gray and olive washes with delicate pale graphite lines visible on dark, preserving its quiet layered character. All eleven text rows/headers and all nine chapters must stay clear. No luminous glow, no gradients, no black vignette, no texture overlay, no new elements, no slogans, no religious imagery. It is the flat website edge to edge, no browser/device frame. High fidelity to the reference is more important than inventing a new design.",
+  "tool": "built-in image_gen",
+  "approved": true,
+  "source": "/Users/abeni/.codex/generated_images/01a11f7f-f20b-7d43-8e0c-463db7f98991/exec-19f3fd56-d68e-4a13-ad19-b0a2e85034aa.png",
+  "reference": "/Users/abeni/Documents/projects/upwork/afterlife/.impeccable/mocks/home-b.png",
+  "approvalSource": "User: I approve the mockups",
+  "approvalDate": "2026-10-09",
+  "approvalScope": "Visual mockups and interface wording; public launch requires a separate working-site review"
+}

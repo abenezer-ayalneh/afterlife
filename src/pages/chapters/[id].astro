@@ -1,0 +1,30 @@
+---
+import {env} from 'cloudflare:workers';
+import Shell from '../../layouts/Shell.astro';
+import Results from '../../components/Results.astro';
+import Comment from '../../components/Comment.astro';
+import Arrow from '../../components/Arrow.astro';
+import Verification from '../../components/Verification.astro';
+import {chapter,chapters,comments,results,ownRating} from '../../lib/db';
+import {integer,RATING_QUESTION} from '../../lib/model';
+import {isLocal} from '../../lib/security';
+const id=integer(Astro.params.id,1,100000,'This chapter could not be found.');const item=await chapter(env.DB,id);
+const [data,rating,list,index]=await Promise.all([results(env.DB,id),ownRating(env.DB,id,Astro.locals.owner),comments(env.DB,id,Astro.locals.owner,Astro.url.searchParams.get('cursor')||undefined),chapters(env.DB)]);
+const position=index.findIndex(row=>row.id===id);const previous=index[position-1];const next=index[position+1];const local=isLocal(Astro.request,env);
+---
+<Shell title={item.title} narrow>
+  <a href="/" class="back-link"><Arrow back />All chapters</a>
+  <section class="chapter-rating" aria-labelledby="chapter-title"><h1 id="chapter-title">{item.title}</h1><p class="reading-thanks">Thank you for reading.</p>
+    <form id="rating-form" class="reader-form" method="post" action={`/api/chapters/${id}/rating`} data-action="rating"><fieldset><legend>{RATING_QUESTION}</legend><div class="score-choices">{Array.from({length:11},(_,score)=><label class="score-choice"><input type="radio" name="score" value={score} checked={rating?.score===score} required aria-label={`${score}${score===0?' — Not at all convincing':score===10?' — Extremely convincing':''}`} /><span>{score}</span></label>)}</div><div class="scale-endpoints"><span>0 — Not at all convincing</span><span>10 — Extremely convincing</span></div></fieldset>
+      <input type="hidden" name="version" value={rating?.version||0} /><input type="hidden" name="requestId" value={crypto.randomUUID()} /><Verification action="rating" /><button type="submit">{rating?'Update rating':'Submit rating'}</button><p class="form-hint" id="saved-rating">{rating?`Your saved rating: ${rating.score} / 10. You can update it from this browser.`:'You can update your rating from this browser.'}</p><p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+  <Results data={data} />
+  <section id="comments" class="comments-section" aria-labelledby="comments-title"><h2 id="comments-title">Comments</h2><h3>Leave a comment</h3><p class="muted">You can post without submitting a rating.</p>
+    <form id="comment-form" class="reader-form" method="post" action={`/api/chapters/${id}/comments`} data-action="comment"><label>Name or nickname (optional)<input name="author" maxlength="60" autocomplete="nickname" /></label><label>Comment<textarea name="body" rows="5" maxlength="2000" required aria-describedby="comment-hint"></textarea></label><input type="hidden" name="requestId" value={crypto.randomUUID()} /><p class="form-hint" id="comment-hint">Comments are public. Names are not verified. Maximum 2,000 characters.</p><Verification action="comment" /><button type="submit">Post comment</button><p class="form-status" role="status" aria-live="polite"></p></form>
+    <div id="comment-list">{list.items.map(item=><Comment item={item} />)}</div><p id="comments-empty" class="empty-comments" hidden={list.items.length>0}>No comments yet</p>{list.next && <a class="more-comments" href={`/chapters/${id}?cursor=${encodeURIComponent(list.next)}#comments`}>Older comments <Arrow /></a>}
+  </section>
+  <nav class="chapter-navigation" aria-label="Chapter navigation">{previous?<a href={`/chapters/${previous.id}`}><Arrow back /><span>{previous.title}</span></a>:<a href="/"><Arrow back />All chapters</a>}{next && <a href={`/chapters/${next.id}`}><span>{next.title}</span><Arrow /></a>}</nav>
+  {local && <p class="development-note">Local development · Responses are saved only in this computer’s test database.</p>}
+  <script src="../../scripts/reader.ts"></script>
+</Shell>

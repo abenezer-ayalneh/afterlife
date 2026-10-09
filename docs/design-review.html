@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plan B · Design review</title>
+  <style>
+    :root { color-scheme: light; --bg:#f4f1e9; --ink:#242823; --muted:#586052; --line:#d4d7cc; --accent:#43563b; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 system-ui,sans-serif; }
+    main { width:min(1440px,calc(100% - 48px)); margin:48px auto 80px; }
+    header { max-width:800px; }
+    h1,h2,h3 { font-family:Georgia,serif; font-weight:400; line-height:1.2; }
+    h1 { font-size:clamp(32px,4vw,52px); margin:0 0 20px; }
+    h2 { font-size:30px; margin:0 0 12px; }
+    h3 { font-size:22px; margin:0 0 16px; }
+    p { margin:0 0 16px; }
+    a { color:var(--accent); text-underline-offset:4px; }
+    a:focus-visible,button:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+    nav { display:flex; flex-wrap:wrap; gap:12px 24px; margin:32px 0; padding:20px 0; border-block:1px solid var(--line); }
+    section { margin-top:64px; scroll-margin-top:24px; }
+    .intro { max-width:760px; color:var(--muted); }
+    .pair { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:24px; align-items:start; }
+    figure { margin:0; }
+    figure img { display:block; width:100%; height:auto; }
+    figcaption { font-size:14px; color:var(--muted); margin-top:12px; }
+    .phones { display:flex; flex-wrap:wrap; gap:24px; align-items:start; margin-top:24px; }
+    .phones figure { width:min(390px,100%); }
+    .art-light { background:#f5f2e9; }
+    .art-dark { background:#202720; }
+    .art img { aspect-ratio:3/2; object-fit:contain; }
+    .copy { max-width:780px; padding:24px 0; border-block:1px solid var(--line); }
+    dl { display:grid; grid-template-columns:180px 1fr; gap:16px 24px; margin:24px 0 0; }
+    dt { font-weight:600; }
+    dd { margin:0; }
+    .review-action { display:inline-block; background:var(--accent); color:#fff; padding:12px 24px; text-decoration:none; border-radius:4px; }
+    footer { margin-top:64px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); max-width:800px; }
+    @media(max-width:760px) { main{width:calc(100% - 32px);margin-top:32px;} .pair{grid-template-columns:1fr;} dl{grid-template-columns:1fr;gap:4px;} dd{margin-bottom:16px;} section{margin-top:48px;} }
+  </style>
+</head>
+<body><main>
+  <header>
+    <h1>An Afterlife for Atheists</h1>
+    <p>Plan B · Contents-page design</p>
+    <p class="intro">The selected homepage composition is expanded below into light and dark themes, desktop and mobile chapter pages, and standalone illustration assets. These static design mockups were approved on October 9, 2026. The implemented website is available for local review at http://127.0.0.1:4321/. Public launch remains a separate checkpoint.</p>
+  </header>
+  <nav aria-label="Review sections">
+    <a href="#homepage">Homepage</a><a href="#chapter">Chapter page</a><a href="#mobile">Mobile flow</a><a href="#artwork">Illustration</a><a href="#wording">Interface wording</a><a href="#review">Review</a>
+  </nav>
+  <section id="homepage">
+    <h2>Homepage</h2>
+    <p class="intro">A compact book introduction and illustration, followed by nine chapter links in reading order. Final chapter titles can replace the placeholders.</p>
+    <div class="pair">
+      <figure><a href="../.impeccable/mocks/home-b.png"><img src="../.impeccable/mocks/home-b.png" alt="Selected light homepage with book title, ink study and nine chapter rows"></a><figcaption>Desktop · Light · Selected composition B</figcaption></figure>
+      <figure><a href="../.impeccable/mocks/home-dark.png"><img src="../.impeccable/mocks/home-dark.png" alt="Dark homepage using charcoal surfaces and muted sage details"></a><figcaption>Desktop · Dark</figcaption></figure>
+    </div>
+    <div class="phones">
+      <figure><a href="../.impeccable/mocks/home-mobile-light-v2.png"><img loading="lazy" src="../.impeccable/mocks/home-mobile-light-v2.png" alt="Mobile light homepage, first viewport"></a><figcaption>Mobile · Light · Remaining chapter links continue below</figcaption></figure>
+      <figure><a href="../.impeccable/mocks/home-mobile-dark.png"><img loading="lazy" src="../.impeccable/mocks/home-mobile-dark.png" alt="Mobile dark homepage, first viewport"></a><figcaption>Mobile · Dark</figcaption></figure>
+    </div>
+  </section>
+  <section id="chapter">
+    <h2>Chapter page</h2>
+    <p class="intro">Chapter title and question, rating controls, public results, then independent comments. An empty chapter shows “No ratings yet.”</p>
+    <div class="pair">
+      <figure><a href="../.impeccable/mocks/chapter-desktop-light.png"><img loading="lazy" src="../.impeccable/mocks/chapter-desktop-light.png" alt="Light chapter page with 0 to 10 rating form, empty public results and optional comments"></a><figcaption>Desktop · Light</figcaption></figure>
+      <figure><a href="../.impeccable/mocks/chapter-desktop-dark.png"><img loading="lazy" src="../.impeccable/mocks/chapter-desktop-dark.png" alt="Dark chapter page with rating controls, results and comments"></a><figcaption>Desktop · Dark</figcaption></figure>
+    </div>
+  </section>
+  <section id="mobile">
+    <h2>Mobile chapter flow</h2>
+    <p class="intro">All eleven rating choices fit on two rows. The comment section below is a separate scrolled view of the same page.</p>
+    <div class="phones">
+      <figure><a href="../.impeccable/mocks/chapter-mobile-light.png"><img loading="lazy" src="../.impeccable/mocks/chapter-mobile-light.png" alt="Mobile light chapter rating page with no score selected"></a><figcaption>Rating · Light</figcaption></figure>
+      <figure><a href="../.impeccable/mocks/chapter-mobile-dark.png"><img loading="lazy" src="../.impeccable/mocks/chapter-mobile-dark.png" alt="Mobile dark chapter rating page"></a><figcaption>Rating · Dark</figcaption></figure>
+      <figure><a href="../.impeccable/mocks/chapter-mobile-comments-light.png"><img loading="lazy" src="../.impeccable/mocks/chapter-mobile-comments-light.png" alt="Mobile results and optional comment form with an empty comment list"></a><figcaption>Results and comments · Scrolled view</figcaption></figure>
+    </div>
+  </section>
+  <section id="artwork">
+    <h2>Standalone illustration</h2>
+    <p class="intro">Original overlapping ink forms and fine lines, without lettering, religious symbols, or depictions of an afterlife. Transparent assets are shown on their intended page backgrounds. Exact generation prompts are retained in the project.</p>
+    <div class="pair">
+      <figure class="art"><div class="art-light"><img loading="lazy" src="../assets/plates/ink-study.png" alt="Earthy olive and graphite ink study for the light theme"></div><figcaption>Light treatment · Transparent PNG</figcaption></figure>
+      <figure class="art"><div class="art-dark"><img loading="lazy" src="../assets/plates/ink-study-dark.png" alt="Restrained sage ink study for the dark theme"></div><figcaption>Dark treatment · Transparent PNG</figcaption></figure>
+    </div>
+  </section>
+  <section id="wording">
+    <h2>Interface wording</h2>
+    <p class="intro">The wording below is the source of truth if generated mockups contain small typographic discrepancies. The live site will use selectable HTML text.</p>
+    <div class="copy"><dl>
+      <dt>Book title</dt><dd>An Afterlife for Atheists</dd>
+      <dt>Introduction</dt><dd>A chapter-by-chapter reader survey on the book’s case for the existence of an afterlife.</dd>
+      <dt>Chapter instruction</dt><dd>Select the chapter you have read.</dd>
+      <dt>Greeting</dt><dd>Thank you for reading.</dd>
+      <dt>Rating question</dt><dd>How convincing did you find this chapter’s case for the existence of an afterlife?</dd>
+      <dt>Scale endpoints</dt><dd>0 — Not at all convincing<br>10 — Extremely convincing</dd>
+      <dt>Rating action</dt><dd>Submit rating / Update rating</dd>
+      <dt>Empty results</dt><dd>No ratings yet</dd>
+      <dt>Comment fields</dt><dd>Name or nickname (optional)<br>Comment<br>Your comment will be public. You can post without submitting a rating.</dd>
+      <dt>Comment action</dt><dd>Post comment</dd>
+      <dt>Empty comments</dt><dd>No comments yet</dd>
+      <dt>Theme choices</dt><dd>System · Light · Dark</dd>
+    </dl></div>
+  </section>
+  <section id="review">
+    <h2>Visual checkpoint</h2>
+    <p class="intro">Review the full set above and share approval or requested changes in the chat. The illustration review below records approval of the actual asset and the plan to build text, controls, and chapter links as accessible HTML.</p>
+    <a class="review-action" href="http://127.0.0.1:63320/" target="_blank" rel="noopener">Open illustration and build-plan review</a>
+  </section>
+  <footer><p>This page is a local design review. It is not a public website, and it stores no reader ratings or comments.</p></footer>
+</main></body></html>

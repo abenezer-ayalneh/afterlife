@@ -1,0 +1,11 @@
+---
+import {env} from 'cloudflare:workers';
+import Shell from '../layouts/Shell.astro';
+import Arrow from '../components/Arrow.astro';
+import {chapters} from '../lib/db';
+const items=await chapters(env.DB);
+---
+<Shell home>
+  <section class="home-intro" aria-labelledby="book-title"><div class="book-introduction"><h1 id="book-title">An Afterlife<br /> for Atheists</h1><p>Choose a chapter to rate how convincing you found its case for an afterlife and read or leave comments.</p></div><div class="ink-study" aria-hidden="true"><img class="art-light" src="/assets/plates/ink-study.png" width="1536" height="1024" alt="" fetchpriority="high" /><img class="art-dark" src="/assets/plates/ink-study-dark.png" width="1536" height="1024" alt="" /></div></section>
+  <section class="chapter-index" aria-labelledby="chapters-title"><h2 id="chapters-title">Chapters</h2><p class="index-instruction">Select the chapter you have read.</p><ol>{items.map(item=><li><a href={`/chapters/${item.id}`}><span class="chapter-number" aria-hidden="true">{String(item.id).padStart(2,'0')}</span><span class="chapter-link-title">{item.title}</span><Arrow /></a></li>)}</ol></section>
+</Shell>
