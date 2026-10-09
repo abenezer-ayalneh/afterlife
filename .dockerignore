@@ -14,3 +14,5 @@ docs
 .impeccable
 tests
 deploy
+
+.logs

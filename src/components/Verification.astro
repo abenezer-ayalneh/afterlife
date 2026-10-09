@@ -1,8 +1,10 @@
 ---
 import {env} from '../lib/runtime';
-import {isLocal} from '../lib/security';
+import {formToken} from '../lib/security';
 interface Props{action:string}
 const {action}=Astro.props;
-const enabled=!isLocal(Astro.request,env);
+const token=formToken(env,Astro.locals.owner,action);
 ---
-{enabled && <div class="verification"><div class="turnstile-widget" data-sitekey={env.TURNSTILE_SITE_KEY} data-action={action}></div><noscript><p>Enable JavaScript to complete spam verification and submit this form.</p></noscript></div>}
+<input type="hidden" name="formToken" value={token} />
+<div class="spam-trap" aria-hidden="true"><label>Leave this field empty<input type="text" name="contact_url" value="" tabindex="-1" autocomplete="off" /></label></div>
+<style>.spam-trap{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden;}</style>

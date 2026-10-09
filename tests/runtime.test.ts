@@ -7,10 +7,10 @@ import {validateConfig} from '../src/lib/config.mjs';
 import {openDatabase,migrate} from '../src/lib/sqlite-core.mjs';
 import {canonicalRequest,reader,rateLimit,type Runtime} from '../src/lib/security';
 import type {APIContext} from 'astro';
-const base={APP_ENV:'staging',PUBLIC_ORIGIN:'https://afterlife.abenezer-ayalneh.dev',DATABASE_PATH:'/var/lib/afterlife/staging.sqlite',ADMIN_EMAILS:'abenezer.ayalneh.42@gmail.com,boersarama@gmail.com',TURNSTILE_SITE_KEY:'test-site',TURNSTILE_SECRET_KEY:'test-secret',RATE_LIMIT_SALT:'x'.repeat(32),ACCESS_TEAM_DOMAIN:'example.cloudflareaccess.com',ACCESS_AUD:'test-audience'};
+const base={APP_ENV:'staging',PUBLIC_ORIGIN:'https://afterlife.abenezer-ayalneh.dev',DATABASE_PATH:'/var/lib/afterlife/staging.sqlite',ADMIN_EMAILS:'abenezer.ayalneh.42@gmail.com,boersarama@gmail.com',RATE_LIMIT_SALT:'x'.repeat(32)};
 test('deployment configuration fails closed and isolates environments',()=>{
  assert.equal(validateConfig(base).ADMIN_EMAILS.length,2);
- for(const key of ['PUBLIC_ORIGIN','DATABASE_PATH','ADMIN_EMAILS','TURNSTILE_SITE_KEY','TURNSTILE_SECRET_KEY','RATE_LIMIT_SALT','ACCESS_TEAM_DOMAIN','ACCESS_AUD'])assert.throws(()=>validateConfig({...base,[key]:''}));
+ for(const key of ['PUBLIC_ORIGIN','DATABASE_PATH','ADMIN_EMAILS','RATE_LIMIT_SALT'])assert.throws(()=>validateConfig({...base,[key]:''}));
  for(const patch of [{PUBLIC_ORIGIN:'http://afterlife.abenezer-ayalneh.dev'},{DATABASE_PATH:'relative.sqlite'},{DATABASE_PATH:'/var/lib/afterlife/production.sqlite'},{ADMIN_EMAILS:'other@example.com'},{APP_ENV:'production'},{PUBLIC_ORIGIN:base.PUBLIC_ORIGIN+'/'},{APP_ENV:'local'}])assert.throws(()=>validateConfig({...base,...patch}));
  assert.equal(validateConfig({APP_ENV:'local'},{allowLocal:true}).DATABASE_PATH,'.data/local.sqlite');
 });
@@ -41,7 +41,7 @@ test('network limits use Nginx-normalized client addresses without storing raw I
  const db=openDatabase(':memory:');migrate(db);
  const runtime={...validateConfig(base),DB:db} as Runtime;
  try{
-  const request=new Request(base.PUBLIC_ORIGIN+'/api',{headers:{'cf-connecting-ip':'192.0.2.42'}});
+  const request=new Request(base.PUBLIC_ORIGIN+'/api',{headers:{'x-real-ip':'192.0.2.42'}});
   for(let i=0;i<60;i++)await rateLimit(request,runtime,`reader-${i}`);
   await assert.rejects(rateLimit(request,runtime,'another-reader'));
   const buckets=await db.prepare('SELECT bucket FROM rate_limits').all();assert.ok(!JSON.stringify(buckets).includes('192.0.2.42'));

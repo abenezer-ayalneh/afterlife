@@ -12,7 +12,7 @@ npm run db:local
 npm run dev
 ```
 
-Open http://127.0.0.1:4321/. Ratings and comments persist in `.data/local.sqlite`. This is explicitly labeled local test data. Local submissions bypass Turnstile only in an Astro development build with `APP_ENV=local` on a loopback hostname. Built staging and production versions fail closed without real configuration. Copy `.env.example` to `.env` if you need to override local defaults. `/admin` has no development authentication bypass.
+Open http://127.0.0.1:4321/. Ratings and comments persist in `.data/local.sqlite`. This is explicitly labeled local test data. Signed form tokens, honeypots and rate limits protect submissions locally and after deployment. Built staging and production versions fail closed without valid configuration. Copy `.env.example` to `.env` if you need to override local defaults. `/admin` has no development authentication bypass. Initialize each local account with `APP_ENV=local node scripts/admin-account.mjs EMAIL` after migrating, then visit `/admin/login`.
 
 ```sh
 npm test
@@ -26,14 +26,14 @@ Stop the development daemon with `npm exec astro dev stop` before running the pr
 - Ratings accept integer 0–10 scores, with no initial selection. Database uniqueness, transactional receipts and optimistic versions make replacement and retries safe. Concurrent conflicting revisions return a recoverable conflict.
 - Public aggregates include zero scores correctly; an empty chapter has no average.
 - Comments are independent, plain text, public immediately, newest first, twenty per page. Browser ownership authorizes editing/deletion. Reporting never automatically hides a comment.
-- Access JWTs are verified for signature, issuer, audience, expiry, type and either configured administrator email on every administrator request. Alternate deployment addresses cannot authorize administrator access.
+- Two equal administrators use separate local email/password accounts. Scrypt password hashes and hashed 12-hour sessions stay in SQLite; passwords are set/reset with a private server CLI. Every administrator request requires a current session and approved email. Origin checks and signed form tokens protect mutations.
 - The administrator compares distributions, streams credential-free CSV snapshots, hides/restores comments, reviews reports, renames chapter titles and appends chapters. Reader-deleted text is purged from active tables and cannot be restored by moderation.
 
 ## Launch status
 
-The repository is prepared for native Node under PM2, behind the existing Nginx on the GoDaddy Ubuntu VPS (`68.178.201.176`, 2 GB RAM). `https://afterlife.abenezer-ayalneh.dev` is the approved Cloudflare-proxied staging hostname. No remote configuration or deployment has been performed. Both authorized administrators have equal permissions. Real Access/Turnstile credentials and origin TLS must be supplied during setup.
+The repository is prepared for native Node under PM2, behind the existing Nginx on the GoDaddy Ubuntu VPS (`68.178.201.176`, 2 GB RAM). `https://afterlife.abenezer-ayalneh.dev` is the approved DNS-only staging hostname. No remote configuration or deployment has been performed. Both authorized administrators have equal permissions. The application has no Cloudflare runtime dependency. Nginx and Certbot provide HTTPS; initialize both local administrator passwords during setup.
 
-Run `npm run build:staging`, then `npm run smoke` for the Node build. Runtime preflight is `node --env-file=/etc/afterlife/afterlife.env scripts/preflight.mjs staging`. Deployment, optional Docker maintenance tools, manual backup/recovery and rollback are documented in [docs/operations.md](docs/operations.md). There are no automated backups. Review the working staging site before launch; production starts with a separate clean database and final domain. Generate the eleven final book links after launch with `node scripts/chapter-links.mjs https://your-approved-domain`.
+Run `npm run build:staging`, then `npm run smoke` for the Node build. The VPS checkout is `/home/richard/afterlife`, with `.env.staging`, `.data/staging.sqlite`, and `.logs/` in that folder. Runtime preflight is `node --env-file=/home/richard/afterlife/.env.staging scripts/preflight.mjs staging`. Deployment, optional Docker maintenance tools, manual backup/recovery and rollback are documented in [docs/operations.md](docs/operations.md). There are no automated backups. Review the working staging site before launch; production starts with a separate clean database and final domain. Generate the eleven final book links after launch with `node scripts/chapter-links.mjs https://your-approved-domain`.
 
 See [PRODUCT.md](PRODUCT.md), [CONTEXT.md](CONTEXT.md), [docs/development-plan.md](docs/development-plan.md), and [docs/design-review.md](docs/design-review.md). Historical generated mockups retain the earlier book title; all shipped text uses **An Afterlife for Atheists**.
 

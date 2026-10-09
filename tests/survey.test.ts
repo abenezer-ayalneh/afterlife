@@ -7,11 +7,10 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {openDatabase,migrate} from '../src/lib/sqlite-core.mjs';
 import type {Database} from '../src/lib/sqlite';
-import {generateKeyPair,SignJWT} from 'jose';
 import {chapters,results,ownRating,saveRating,postComment,comments,updateComment,deleteComment,reportComment} from '../src/lib/db';
 import {integer,text,csvCell} from '../src/lib/model';
 import {manage,exportCSV} from '../src/lib/admin';
-import {administrator,readBody,sameOrigin,verifyTurnstile,rateLimit,type Runtime} from '../src/lib/security';
+import {readBody,sameOrigin,formToken,verifyForm,rateLimit,type Runtime} from '../src/lib/security';
 
 let directory:string;let db:Database;
 before(async()=>{directory=await mkdtemp(join(tmpdir(),'afterlife-tests-'));const sqlite=openDatabase(join(directory,'survey.sqlite'));migrate(sqlite);migrate(sqlite);db=sqlite as Database;});
@@ -63,31 +62,18 @@ test('text and request limits reject invalid bodies and preserve Unicode',async(
   await assert.rejects(readBody(new Request('https://book.test',{method:'POST',headers:{'Content-Type':'application/json'},body:'x'.repeat(16385)})));
   await assert.rejects(readBody(new Request('https://book.test',{method:'POST',headers:{'Content-Type':'application/json'},body:'[]'})));
 });
-test('admin requires verified signature, approved email, issuer, audience and expiry; aliases fail',async()=>{
-  const {privateKey,publicKey}=await generateKeyPair('RS256');const forged=await generateKeyPair('RS256');
-  const runtime:Runtime={DB:db,APP_ENV:'production',PUBLIC_ORIGIN:'https://book.test',TURNSTILE_SITE_KEY:'test',ACCESS_TEAM_DOMAIN:'example.cloudflareaccess.com',ACCESS_AUD:'audience',ADMIN_EMAILS:['abenezer.ayalneh.42@gmail.com','boersarama@gmail.com']};
-  const token=async(overrides:Record<string,unknown>={},key=privateKey)=>new SignJWT({email:'abenezer.ayalneh.42@gmail.com',type:'app',...overrides}).setProtectedHeader({alg:'RS256'}).setIssuer(String(overrides.iss||'https://example.cloudflareaccess.com')).setAudience(String(overrides.aud||'audience')).setSubject('subject').setIssuedAt().setExpirationTime('1h').sign(key);
-  const req=(value:string,url='https://book.test/admin')=>new Request(url,{headers:{'cf-access-jwt-assertion':value}});
-  assert.equal(await administrator(req(await token()),runtime,async()=>publicKey),'abenezer.ayalneh.42@gmail.com');
-  assert.equal(await administrator(req(await token({email:'boersarama@gmail.com'})),runtime,async()=>publicKey),'boersarama@gmail.com');
-  for(const overrides of [{aud:'wrong'},{iss:'https://wrong.cloudflareaccess.com'},{type:'service'}]) await assert.rejects(administrator(req(await token(overrides)),runtime,async()=>publicKey));
-  await assert.rejects(administrator(new Request('https://book.test/admin'),runtime,async()=>publicKey));
-  await assert.rejects(administrator(req(await token({email:'other@example.com'})),runtime,async()=>publicKey));await assert.rejects(administrator(req(await token({},forged.privateKey)),runtime,async()=>publicKey));
-  const expired=await new SignJWT({email:'abenezer.ayalneh.42@gmail.com',type:'app'}).setProtectedHeader({alg:'RS256'}).setIssuer('https://example.cloudflareaccess.com').setAudience('audience').setSubject('s').setIssuedAt(1).setExpirationTime(2).sign(privateKey);await assert.rejects(administrator(req(expired),runtime,async()=>publicKey));
-  await assert.rejects(administrator(req(await token(),'https://alternate.workers.dev/admin'),runtime,async()=>publicKey));
-  assert.throws(()=>sameOrigin(new Request('https://book.test/api',{method:'POST',headers:{Origin:'https://evil.test'}}),runtime));
-});
 test('consistent SQLite backup restores into an isolated database',async()=>{
   const {stdout}=await promisify(execFile)(process.execPath,['scripts/verify-recovery.mjs']);assert.ok(stdout.includes('Recovery verified'));
 });
-test('spam verification fails closed for wrong action, host, replay, missing token or unavailable service',async()=>{
-  const runtime:Runtime={DB:db,APP_ENV:'production',PUBLIC_ORIGIN:'https://book.test',TURNSTILE_SITE_KEY:'site',TURNSTILE_SECRET_KEY:'test-secret',RATE_LIMIT_SALT:'test-salt',ACCESS_TEAM_DOMAIN:'',ACCESS_AUD:'',ADMIN_EMAILS:[]};
-  const request=new Request('https://book.test/api');const body={'cf-turnstile-response':'token'};
-  const verify=(reply:object)=>async()=>Response.json(reply);
-  await verifyTurnstile(request,runtime,body,'rating',verify({success:true,hostname:'book.test',action:'rating'}));
-  for(const reply of [{success:false},{success:true,hostname:'other.test',action:'rating'},{success:true,hostname:'book.test',action:'comment'}])await assert.rejects(verifyTurnstile(request,runtime,body,'rating',verify(reply)));
-  await assert.rejects(verifyTurnstile(request,runtime,{},'rating'));await assert.rejects(verifyTurnstile(request,runtime,body,'rating',async()=>{throw new Error('offline')}));
-  for(let i=0;i<15;i++)await rateLimit(request,runtime,'rate-test');await assert.rejects(rateLimit(request,runtime,'rate-test'));
+test('local form protection rejects tampering, wrong action/owner, expiry, honeypots and instant submissions',async()=>{
+ const runtime:Runtime={DB:db,APP_ENV:'production',PUBLIC_ORIGIN:'https://book.test',RATE_LIMIT_SALT:'x'.repeat(32),ADMIN_EMAILS:[]};
+ const now=Date.now();const body={contact_url:'',formToken:formToken(runtime,'owner','rating',now-2000)};
+ verifyForm(runtime,'owner',body,'rating',now);
+ for(const patch of [{contact_url:'spam'},{formToken:''},{formToken:body.formToken+'x'},{formToken:formToken(runtime,'owner','rating',now-15000000)},{formToken:formToken(runtime,'owner','rating',now)}])assert.throws(()=>verifyForm(runtime,'owner',{...body,...patch},'rating',now));
+ assert.throws(()=>verifyForm(runtime,'other',body,'rating',now));assert.throws(()=>verifyForm(runtime,'owner',body,'comment',now));
+ assert.throws(()=>sameOrigin(new Request('https://book.test/api',{method:'POST',headers:{Origin:'https://evil.test'}}),runtime));
+ const request=new Request('https://book.test/api',{headers:{'x-real-ip':'192.0.2.55'}});
+ for(let i=0;i<15;i++)await rateLimit(request,runtime,'rate-test');await assert.rejects(rateLimit(request,runtime,'rate-test'));
 });
 
 test('transaction failure rolls back earlier writes',async()=>{

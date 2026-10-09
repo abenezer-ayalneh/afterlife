@@ -1,5 +1,6 @@
 import type { APIContext } from 'astro';
-import { createRemoteJWKSet, jwtVerify, type JWTVerifyGetKey } from 'jose';
+import {createHmac,randomBytes,timingSafeEqual} from 'node:crypto';
+import {isIP} from 'node:net';
 import { Problem } from './model';
 
 import type { Runtime } from './runtime';
@@ -20,7 +21,7 @@ export async function reader(context:APIContext) {
   }
   return hash(value);
 }
-// Nginx overwrites these headers and the container port is loopback-only.
+// Nginx overwrites these headers and the Node port is loopback-only.
 // Reject contradictory values even if the adapter drops an invalid forwarded host.
 export function canonicalRequest(request:Request,env:Runtime) {
   const origin=new URL(env.PUBLIC_ORIGIN);
@@ -40,18 +41,6 @@ export function sameOrigin(request:Request,env:Runtime) {
   const site=request.headers.get('sec-fetch-site');
   if(site && site!=='same-origin' && site!=='none') throw new Problem(403,'Please submit this form from the website.');
 }
-export async function administrator(request:Request,env:Runtime,verificationKeys?:JWTVerifyGetKey) {
-  if(!env.PUBLIC_ORIGIN || new URL(request.url).origin!==env.PUBLIC_ORIGIN || !env.ADMIN_EMAILS.length || !env.ACCESS_AUD || !/^[a-z\d-]+\.cloudflareaccess\.com$/.test(env.ACCESS_TEAM_DOMAIN)) throw new Problem(403,'Administrator access is not configured for this address.');
-  const token=request.headers.get('cf-access-jwt-assertion');
-  if(!token) throw new Problem(401,'Please sign in through the administrator email code.');
-  try {
-    const issuer=`https://${env.ACCESS_TEAM_DOMAIN}`;
-    const keys=verificationKeys||createRemoteJWKSet(new URL(`${issuer}/cdn-cgi/access/certs`),{timeoutDuration:5000});
-    const {payload}=await jwtVerify(token,keys,{issuer,audience:env.ACCESS_AUD,algorithms:['RS256'],requiredClaims:['exp','iat','email','sub'],clockTolerance:5});
-    if(typeof payload.email!=='string' || !env.ADMIN_EMAILS.includes(payload.email.toLowerCase()) || payload.type!=='app') throw new Error('Invalid account');
-    return payload.email;
-  } catch { throw new Problem(403,'Your administrator session could not be verified. Please sign in again.'); }
-}
 export async function readBody(request:Request):Promise<Record<string,unknown>> {
   const stream=request.body?.getReader(); if(!stream) throw new Problem(400,'The form is empty.');
   const chunks:Uint8Array[]=[];let length=0;
@@ -69,7 +58,7 @@ export async function readBody(request:Request):Promise<Record<string,unknown>> 
 export async function rateLimit(request:Request,env:Runtime,owner:string) {
   const now=Math.floor(Date.now()/1000);const window=Math.floor(now/60);
   if(!isLocal(request,env) && !env.RATE_LIMIT_SALT) throw new Problem(503,'Submissions are temporarily unavailable. Please try again later.');
-  const ip=request.headers.get('cf-connecting-ip');
+  const ip=clientIP(request,env);
   const buckets=[`reader:${owner}:${window}`];
   if(ip) buckets.push(`network:${await hash((env.RATE_LIMIT_SALT||'local')+':'+ip)}:${window}`);
   for(const [i,bucket] of buckets.entries()) {
@@ -78,14 +67,27 @@ export async function rateLimit(request:Request,env:Runtime,owner:string) {
   }
   await env.DB.prepare('DELETE FROM rate_limits WHERE expires_at < ?').bind(now).run();
 }
-export async function verifyTurnstile(request:Request,env:Runtime,body:Record<string,unknown>,action:string,siteverify:typeof fetch=fetch) {
-  if(isLocal(request,env)) return;
-  const token=body['cf-turnstile-response'];
-  if(!env.TURNSTILE_SECRET_KEY || !env.TURNSTILE_SITE_KEY) throw new Problem(503,'Submissions are temporarily unavailable. Please try again later.');
-  if(typeof token!=='string' || !token || token.length>2048) throw new Problem(400,'Please complete the verification and try again.');
-  try {
-    const result=await siteverify('https://challenges.cloudflare.com/turnstile/v0/siteverify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secret:env.TURNSTILE_SECRET_KEY,response:token,remoteip:request.headers.get('cf-connecting-ip')||undefined}),signal:AbortSignal.timeout(8000)});
-    const verification=await result.json() as {success?:boolean;hostname?:string;action?:string};
-    if(!result.ok || !verification.success || verification.hostname!==new URL(request.url).hostname || verification.action!==action) throw new Problem(400,'Verification expired or failed. Please verify again.');
-  } catch(error) { if(error instanceof Problem) throw error;throw new Problem(503,'Verification is temporarily unavailable. Your text is preserved; please try again.'); }
+export function clientIP(request:Request,env:Runtime) {
+ const value=request.headers.get('x-real-ip');
+ if(value && isIP(value))return value;
+ if(isLocal(request,env))return '127.0.0.1';
+ throw new Problem(503,'Request protection is unavailable. Please try again later.');
+}
+export function formToken(env:Runtime,owner:string,action:string,now=Date.now()) {
+ const payload=Buffer.from(JSON.stringify({owner,action,issued:now,nonce:randomBytes(16).toString('hex')})).toString('base64url');
+ const signature=createHmac('sha256',env.RATE_LIMIT_SALT).update('form:'+payload).digest('hex');
+ return payload+'.'+signature;
+}
+export function verifyForm(env:Runtime,owner:string,body:Record<string,unknown>,action:string,now=Date.now()) {
+ if(typeof body.contact_url!=='string' || body.contact_url!=='')throw new Problem(400,'The form could not be verified. Reload and try again.');
+ const token=body.formToken;if(typeof token!=='string' || token.length>1000)throw new Problem(400,'The form expired. Reload and try again.');
+ try {
+  const [payload,signature,...extra]=token.split('.');
+  if(extra.length || !/^[a-f\d]{64}$/.test(signature||''))throw new Error();
+  const expected=createHmac('sha256',env.RATE_LIMIT_SALT).update('form:'+payload).digest();
+  if(!timingSafeEqual(expected,Buffer.from(signature,'hex')))throw new Error();
+  const saved=JSON.parse(Buffer.from(payload,'base64url').toString('utf8'));
+  if(saved.owner!==owner || saved.action!==action || !Number.isSafeInteger(saved.issued) || saved.issued>now || now-saved.issued>4*60*60*1000)throw new Error();
+  if(['rating','comment','edit','delete','report'].includes(action) && now-saved.issued<1000)throw new Problem(400,'Please wait a moment before submitting. Your text is preserved.');
+ }catch(error){if(error instanceof Problem)throw error;throw new Problem(400,'The form expired or could not be verified. Reload and try again.');}
 }

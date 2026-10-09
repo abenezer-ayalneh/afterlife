@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Delegated by the user and settled in the approved development plan: Astro, TypeScript, native CSS, small client-side scripts, native Node 24 under PM2 on the Ubuntu VPS, SQLite, Cloudflare Access for two equal administrators, and Turnstile for public submissions.
+Delegated by the user and settled in the approved development plan: Astro, TypeScript, native CSS, small client-side scripts, native Node 22.19 (or supported Node 24) under PM2 on the Ubuntu VPS, SQLite, separate local email/password accounts for two equal administrators, and local signed forms/honeypots/rate limits for public submissions.
 
 ## Users
 
@@ -39,7 +39,7 @@ Readers follow durable numbered chapter links from the book. The eleven official
 - Chapter identifiers and published URLs remain stable when titles change.
 - English interface; comments may be in any language. No reader accounts, demographics, advertising analytics, or book purchase flow.
 - Defaults: plain-text comments up to 2,000 characters, names up to 60 characters, newest-first comments paginated 20 at a time.
-- Use the existing 2 GB GoDaddy Ubuntu VPS and Nginx, with Cloudflare proxying the temporary staging domain. A dedicated production domain will be supplied later. No fixed deadline.
+- Use the existing 2 GB GoDaddy Ubuntu VPS and Nginx, with direct DNS-only routing, Nginx proxying and Certbot HTTPS for the temporary staging domain. A dedicated production domain will be supplied later. No fixed deadline.
 
 ## Brand Commitments
 

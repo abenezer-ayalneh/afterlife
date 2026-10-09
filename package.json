@@ -27,8 +27,7 @@
     "@astrojs/node": "^11.1.7",
     "@fontsource/source-sans-3": "^5.3.0",
     "@fontsource/wittgenstein": "^5.3.0",
-    "astro": "^7.3.8",
-    "jose": "^6.2.12"
+    "astro": "^7.3.8"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

@@ -2,8 +2,7 @@ import { validateConfig } from './config.mjs';
 import { openDatabase, type Database } from './sqlite';
 export interface Runtime {
   DB:Database; APP_ENV:string; PUBLIC_ORIGIN:string; ADMIN_EMAILS:string[];
-  TURNSTILE_SITE_KEY:string; TURNSTILE_SECRET_KEY?:string; RATE_LIMIT_SALT?:string;
-  ACCESS_TEAM_DOMAIN:string; ACCESS_AUD:string;
+  RATE_LIMIT_SALT:string;
 }
 let runtime:Runtime | undefined;
 export function getRuntime():Runtime {

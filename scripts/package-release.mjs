@@ -8,7 +8,7 @@ if(!destination || existsSync(destination))throw new Error('Supply a new archive
 if(!existsSync('dist/server/entry.mjs'))throw new Error('Build the Node release first.');
 const temporary=await mkdtemp(join(tmpdir(),'afterlife-release-'));
 try {
-  for(const file of ['dist','package.json','package-lock.json','migrations','src/lib/config.mjs','src/lib/sqlite-core.mjs','scripts/database.mjs','scripts/preflight.mjs','scripts/start.mjs','scripts/healthcheck.mjs','deploy']) {
+  for(const file of ['dist','package.json','package-lock.json','migrations','src/lib/config.mjs','src/lib/sqlite-core.mjs','src/lib/passwords.mjs','scripts/admin-account.mjs','scripts/database.mjs','scripts/preflight.mjs','scripts/start.mjs','scripts/healthcheck.mjs','deploy']) {
     const target=join(temporary,file);await mkdir(dirname(target),{recursive:true});await cp(file,target,{recursive:true,filter:path=>!path.endsWith('/.DS_Store')});
   }
   const result=spawnSync('tar',['-czf',resolve(destination),'-C',temporary,'.'],{stdio:'inherit'});

@@ -1,18 +1,4 @@
 import type {Results} from '../lib/model';
-declare global { interface Window { turnstile?:{reset:(id:string)=>void;remove:(id:string)=>void;render:(element:HTMLElement,options:{sitekey:string;action:string;theme:string;size:string})=>string} } }
-const widgetIds=new WeakMap<HTMLElement,string>();
-function renderWidgets(){
-  if(!window.turnstile)return;
-  document.querySelectorAll<HTMLElement>('.turnstile-widget').forEach(element=>{
-    if(widgetIds.has(element))return;const details=element.closest('details');
-    if(details&&!details.open)return;
-    widgetIds.set(element,window.turnstile!.render(element,{sitekey:element.dataset.sitekey!,action:element.dataset.action!,theme:'auto',size:'flexible'}));
-  });
-}
-if(document.querySelector('.turnstile-widget')){
-  const script=document.createElement('script');script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';script.async=true;script.addEventListener('load',renderWidgets,{once:true});document.head.appendChild(script);
-  document.addEventListener('toggle',renderWidgets,true);
-}
 function showResults(data:Results){
   document.querySelector('[data-average-value]')!.textContent=data.average===null?'—':data.average.toFixed(1);
   document.querySelector<HTMLElement>('#average .out-of')!.hidden=data.average===null;
@@ -26,11 +12,9 @@ async function refreshComments(){
   const documentCopy=new DOMParser().parseFromString(await response.text(),'text/html');
   const source=documentCopy.querySelector('#comment-list');if(!source)throw new Error('Your submission was saved. Reload to see the comment.');
   const hasComments=!!source.querySelector('article');
-  document.querySelectorAll<HTMLElement>('#comment-list .turnstile-widget').forEach(element=>{const id=widgetIds.get(element);if(id)window.turnstile?.remove(id);});
   document.querySelector('#comment-list')!.replaceChildren(...Array.from(source.childNodes));
   document.querySelector<HTMLElement>('#comments-empty')!.hidden=hasComments;
   const oldMore=document.querySelector('.more-comments');oldMore?.remove();const more=documentCopy.querySelector('.more-comments');if(more)document.querySelector('#comments')!.appendChild(more as Node);
-  renderWidgets();
 }
 document.addEventListener('submit',async(event)=>{
   const form=event.target;if(!(form instanceof HTMLFormElement) || !form.classList.contains('reader-form'))return;
@@ -47,7 +31,7 @@ document.addEventListener('submit',async(event)=>{
     else {if(form.dataset.action==='comment'){form.reset();form.querySelector<HTMLInputElement>('[name=requestId]')!.value=crypto.randomUUID();}await refreshComments();}
     const visibleStatus=status.isConnected?status:document.querySelector<HTMLElement>('#comment-form .form-status')!;visibleStatus.textContent=result.message;visibleStatus.classList.remove('error');
   } catch(error){status.textContent=error instanceof Error?error.message:'The form could not be saved. Your text is preserved; please try again.';status.classList.add('error');}
-  finally{const widget=form.querySelector<HTMLElement>('.turnstile-widget');const id=widget&&widgetIds.get(widget);if(id)window.turnstile?.reset(id);button.disabled=false;if(button.textContent==='Saving…')button.textContent=original;}
+  finally{button.disabled=false;if(button.textContent==='Saving…')button.textContent=original;}
 });
 // A changed draft gets a new id; an unchanged retry retains its id.
 document.querySelectorAll<HTMLFormElement>('#rating-form,#comment-form').forEach(form=>form.addEventListener('input',()=>{form.querySelector<HTMLInputElement>('[name=requestId]')!.value=crypto.randomUUID();}));

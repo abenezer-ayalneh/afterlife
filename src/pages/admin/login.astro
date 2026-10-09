@@ -1,0 +1,22 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import Verification from '../../components/Verification.astro';
+import {env} from '../../lib/runtime';
+import {signIn} from '../../lib/auth';
+import {Problem} from '../../lib/model';
+let message='';
+if(Astro.request.method==='POST') {
+ try{await signIn(Astro,env);return Astro.redirect('/admin',303);}
+ catch(error){Astro.response.status=error instanceof Problem?error.status:503;message=error instanceof Problem?error.message:'Sign-in is temporarily unavailable. Try again shortly.';}
+}else if(Astro.request.method!=='GET'){return new Response(null,{status:405});}
+---
+<Shell title="Administrator sign-in" narrow>
+ <h1>Administrator sign-in</h1><p>Enter your administrator email and password.</p>
+ {message && <p class="form-status error" role="alert">{message}</p>}
+ <form method="post" action="/admin/login" class="reader-form">
+  <label>Email<input type="email" name="email" required autocomplete="username" maxlength="254" /></label>
+  <label>Password<input type="password" name="password" required autocomplete="current-password" maxlength="128" /></label>
+  <Verification action="login" /><button type="submit">Sign in</button>
+ </form>
+ <p class="muted">If you need a password reset, contact the person managing this server.</p>
+</Shell>
