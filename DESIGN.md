@@ -185,21 +185,21 @@ The palette reads as neutral paper and ink with restrained earthy controls. The 
 
 ## Layout
 
-The main page is centered with a maximum width of 1208px and 32px side gutters. Survey and policy pages use an 800px maximum width. At 680px and below, both use 20px side gutters. Shared spacing steps are recorded in frontmatter; large sections generally use 32–40px separation and fine horizontal rules.
+The homepage and chapter survey pages are centered with a shared maximum width of 1208px and 32px side gutters. Policy pages use an 800px maximum width. At 680px and below, both use 20px side gutters. Shared spacing steps are recorded in frontmatter; large sections generally use 32–40px separation and fine horizontal rules.
 
 The desktop homepage pairs the introduction and original ink study, followed by full-width contents rows. The text column is 550px; the illustration is positioned beside it. At the middle breakpoint the text column becomes proportional; at the narrow breakpoint the image moves beneath the introduction. Contents rows use number, title, and arrow columns; long titles wrap. Rows have 90px desktop and 124px mobile minimum heights, with all three columns vertically centered. The footer separator has 84px of space above it on desktop and 64px on mobile.
 
-Desktop scores and distributions use eleven equal columns. At the narrow breakpoint, score choices become outlined tiles in a twelve-column grid: six choices on the first row and five centered on the second. The rating submit button spans the available width. Result bins retain eleven columns; navigation and metadata wrap as needed. The local interface has been inspected at 320, 390, 1280, and 1536px; retain these representative widths when extending the system.
+Score choices use outlined number tiles at every screen size, arranged in eleven equal columns on desktop. At the narrow breakpoint, they use a twelve-column grid: six choices on the first row and five centered on the second. The rating submit button spans the available width. Result bins retain eleven columns; navigation and metadata wrap as needed. The local interface has been inspected at 320, 390, 1280, and 1536px; retain these representative widths when extending the system.
 
 ## Elevation & Depth
 
-The page has no ornamental shadows. Depth comes from field tones, hover washes, rules, and ink texture. A checked desktop radio uses an inset ring to distinguish selection; this is control-state geometry, not page elevation. Keyboard focus uses a three-pixel outline with a four-pixel offset.
+The page has no ornamental shadows. Depth comes from field tones, hover washes, rules, and ink texture. Checked score tiles use filled accent backgrounds with matching On Accent text to distinguish selection. Keyboard focus uses a three-pixel outline with a four-pixel offset.
 
 **The Flat Page Rule.** Separate content with space and fine rules. Do not add ornamental shadows to the literary page.
 
 ## Shapes
 
-The overall page is open and rectangular. Buttons and mobile score tiles have slight three-pixel rounding, fields two-pixel rounding, and desktop score hover surfaces four-pixel rounding. Desktop radio circles retain their circular silhouette. Dividers and field borders are fine one-pixel strokes; do not inflate these into decorative frames.
+The overall page is open and rectangular. Buttons and score tiles have slight three-pixel rounding; fields have two-pixel rounding. Score tiles use one-pixel Control Stroke borders and a 48px minimum height at every screen size. Dividers and field borders are fine one-pixel strokes; do not inflate these into decorative frames.
 
 ## Components
 
@@ -221,7 +221,7 @@ An aligned two-digit chapter-number margin, serif chapter title, and inline SVG 
 
 ### Score Choices
 
-Semantic radio inputs offer 0–10 with endpoint descriptions and no preselected score for a new reader. Desktop choices show circles above labels. Narrow layouts use the outlined score tiles described in Layout, with filled accent selection and focus on the enclosing tile. Submission remains a separate explicit action.
+Semantic radio inputs offer 0–10 with endpoint descriptions and no preselected score for a new reader. All layouts use outlined score tiles with centered 18px tabular numerals, filled accent selection, and focus on the enclosing tile. Transparent native radio inputs cover the full tiles and retain keyboard and screen-reader access. Submission remains a separate explicit action.
 
 ### Results and Comments
 

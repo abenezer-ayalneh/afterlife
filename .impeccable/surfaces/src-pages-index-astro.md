@@ -30,3 +30,7 @@ The homepage composition and expanded desktop/mobile/light/dark mockups are appr
 ## Requested interface refinements
 
 The user explicitly superseded the approved mockup row geometry and theme dropdown on 2026-10-09: double each chapter row and keep its text vertically centered, increase space above the footer separator, and use Light/System/Dark icons. Implemented minimum row heights are 90px desktop and 124px mobile. Footer gaps are 84px and 64px. Accessible native icon buttons are 44px square; theme persistence and System behavior remain required. This scoped refinement does not approve deployment or close earlier workflow gates.
+
+On 2026-10-09, the user requested chapter reading and survey pages match the homepage width. Both now share the 1208px maximum page shell with 32px desktop side gutters and 20px side gutters at 680px and below. Policy pages retain their existing narrow shell; survey behavior is unchanged.
+
+On 2026-10-09, the user requested the mobile boxed number rating choices at every screen size. The 48px minimum-height outlined tiles now appear in one row of eleven on desktop, retaining six choices followed by five centered choices at 680px and below. Native radio selection, keyboard focus, endpoint labels, and explicit submission remain required.

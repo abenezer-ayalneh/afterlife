@@ -35,3 +35,15 @@ document.addEventListener('submit',async(event)=>{
 });
 // A changed draft gets a new id; an unchanged retry retains its id.
 document.querySelectorAll<HTMLFormElement>('#rating-form,#comment-form').forEach(form=>form.addEventListener('input',()=>{form.querySelector<HTMLInputElement>('[name=requestId]')!.value=crypto.randomUUID();}));
+
+const commentForm=document.querySelector<HTMLFormElement>('#comment-form');
+const commentBody=commentForm?.querySelector<HTMLTextAreaElement>('textarea[name=body]');
+const commentRemaining=document.querySelector<HTMLElement>('#comment-remaining');
+function updateCommentRemaining(){
+  if(!commentBody || !commentRemaining)return;
+  const remaining=Math.max(0,commentBody.maxLength-commentBody.value.length);
+  commentRemaining.textContent=`${remaining} ${remaining===1?'character':'characters'} remaining`;
+}
+commentBody?.addEventListener('input',updateCommentRemaining);
+commentForm?.addEventListener('reset',()=>queueMicrotask(updateCommentRemaining));
+updateCommentRemaining();

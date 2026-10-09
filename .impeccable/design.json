@@ -347,13 +347,7 @@
         "purpose": "Visible form labels."
       }
     },
-    "shadows": [
-      {
-        "name": "checked-radio-ring",
-        "value": "inset 0 0 0 5px var(--surface)",
-        "purpose": "Checked desktop radio interior ring, not page elevation."
-      }
-    ],
+    "shadows": [],
     "motion": [
       {
         "name": "row-hover",
@@ -422,7 +416,7 @@
       "name": "Score Tile",
       "kind": "custom",
       "refersTo": "score-mobile",
-      "description": "Narrow-screen radio choice with outlined, selected, and keyboard focus states.",
+      "description": "Radio choice at every screen size with outlined, selected, and keyboard focus states.",
       "html": "<label class=\"ds-score\"><input type=\"radio\" name=\"ds-score\" value=\"5\" aria-label=\"5\"><span>5</span></label>",
       "css": ".ds-score{display:inline-flex;position:relative;align-items:center;justify-content:center;min-width:44px;min-height:48px;border:1px solid var(--control-line,#7f8774);border-radius:3px;color:var(--text,#22241f);font:18px/1.5 var(--sans,\"Source Sans 3\",system-ui,sans-serif);cursor:pointer;font-variant-numeric:tabular-nums}.ds-score input{position:absolute;opacity:0;width:100%;height:100%;inset:0;cursor:pointer}.ds-score:hover{background:var(--hover,#eeece6)}.ds-score:has(input:checked){background:var(--accent,#4d603f);color:var(--on-accent,#fff);border-color:var(--accent,#4d603f)}.ds-score:has(input:focus-visible){outline:3px solid var(--focus,#6c7434);outline-offset:4px}"
     },
