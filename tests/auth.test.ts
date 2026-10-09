@@ -34,7 +34,7 @@ test('both local administrators sign in equally; sessions expire, logout and res
   await signIn(context(emails[0]),env);await db.batch([db.prepare('UPDATE admin_accounts SET password_hash=? WHERE email=?').bind(await passwordHash('a different test password'),emails[0]),db.prepare('DELETE FROM admin_sessions WHERE email=?').bind(emails[0])]);await assert.rejects(administrator(request(),env));
   await assert.rejects(signIn(context(emails[0]),env));
   const bad=context(emails[1]);bad.request=new Request('https://book.test/admin/login',{method:'POST',headers:{origin:'https://evil.test'}});await assert.rejects(signIn(bad,env));
-  assert.throws(()=>clientIP(new Request('https://book.test',{headers:{'cf-connecting-ip':'192.0.2.2','x-forwarded-for':'192.0.2.2'}}),env));
+  assert.throws(()=>clientIP(new Request('https://book.test',{headers:{'x-forwarded-for':'192.0.2.2'}}),env));
   assert.throws(()=>clientIP(new Request('https://book.test',{headers:{'x-real-ip':'garbage'}}),env));
   const now=Math.floor(Date.now()/1000);const bucket=`login:network:${await hash(env.RATE_LIMIT_SALT+':192.0.2.44')}:${Math.floor(now/900)}`;
   await db.prepare('UPDATE rate_limits SET count=10 WHERE bucket=?').bind(bucket).run();await assert.rejects(signIn(context(emails[1]),env),(error:any)=>error.status===429);

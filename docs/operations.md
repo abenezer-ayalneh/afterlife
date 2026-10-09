@@ -15,7 +15,7 @@ Target: `afterlife.abenezer-ayalneh.dev` → `68.178.201.176` (GoDaddy Ubuntu, 2
 
    Node 22.19 has passed the app's 22 tests and built-server checks. Its SQLite experimental warning is expected. Port 4321 must be free; if occupied, choose a free port and change it in the environment file, PM2 template, and Nginx `proxy_pass`. If `rg` is unavailable, use `grep` for this check.
 
-2. [ ] **Point the staging hostname at the VPS.** In Cloudflare, set its A record to `68.178.201.176`. Keep this hostname **DNS only** permanently and wait for DNS to resolve to that IP. Remove a conflicting AAAA record unless this VPS also has working IPv6. The bootstrap site below exposes only the certificate challenge, not the application.
+2. [ ] **Point the staging hostname at the VPS.** At your DNS provider, set its A record to `68.178.201.176`. Keep this hostname **DNS only** permanently and wait for DNS to resolve to that IP. Remove a conflicting AAAA record unless this VPS also has working IPv6. The bootstrap site below exposes only the certificate challenge, not the application.
 
 3. [ ] **Confirm the existing build targets the staging hostname.** Work directly in the downloaded project:
 
@@ -47,7 +47,7 @@ Target: `afterlife.abenezer-ayalneh.dev` → `68.178.201.176` (GoDaddy Ubuntu, 2
 
    Keep `APP_ENV=staging`, `PUBLIC_ORIGIN=https://afterlife.abenezer-ayalneh.dev`, `DATABASE_PATH=/home/richard/afterlife/.data/staging.sqlite`, `HOST=127.0.0.1`, and `PORT=4321`. Supply a random `RATE_LIMIT_SALT` generated with `openssl rand -hex 32`. The file uses dotenv syntax and is loaded by Node's `--env-file`; do not source it as a shell script or include it in release archives. Do not overwrite it on subsequent updates.
 
-6. [ ] **Use local administrator accounts and local submission protection.** Keep exactly the two emails from the template: `abenezer.ayalneh.42@gmail.com` and `boersarama@gmail.com`. They have equal permissions. The application handles passwords and sessions, signed forms, invisible honeypots, and reader/network submission limits. No Access team, audience, Turnstile keys, or external authentication service is needed. These spam controls do not prove a visitor is human. If older configuration exists, remove this hostname's Access application and proxy/cache rules; do not change other apps or zone-wide settings.
+6. [ ] **Use local administrator accounts and local submission protection.** Keep exactly the two emails from the template: `abenezer.ayalneh.42@gmail.com` and `boersarama@gmail.com`. They have equal permissions. The application handles passwords and sessions, signed forms, invisible honeypots, and reader/network submission limits. Administrator credentials are managed locally with the password command below. These spam controls do not prove a visitor is human. If older configuration exists, remove this hostname's old external authentication and proxy/cache rules; do not change other apps or zone-wide settings.
 
 7. [ ] **Validate configuration, migrate SQLite, and start this app in PM2.** Use the existing deployment account and PM2 installation:
 
@@ -79,7 +79,7 @@ Target: `afterlife.abenezer-ayalneh.dev` → `68.178.201.176` (GoDaddy Ubuntu, 2
 
    If the symlink already exists, inspect it first and update it only if it belongs to this app. The config stays in the project; `/etc/nginx/sites-enabled/afterlife` is only a symlink. Ensure port 80 is reachable for this hostname, using the server's existing firewall rules. The HTTP bootstrap returns 404 outside `/.well-known/acme-challenge/`.
 
-9. [ ] **Issue a Let's Encrypt certificate with the existing Certbot.** No Cloudflare Origin CA certificate is needed.
+9. [ ] **Issue a Let's Encrypt certificate with the existing Certbot.**
 
    ```sh
    sudo certbot certonly --webroot -w /var/www/letsencrypt \
@@ -97,7 +97,7 @@ Target: `afterlife.abenezer-ayalneh.dev` → `68.178.201.176` (GoDaddy Ubuntu, 2
     sudo systemctl reload nginx
     ```
 
-    Keep DNS **DNS only**. Nginx sends the fixed canonical host and HTTPS scheme to the loopback Node service. Its `X-Real-IP` uses the original socket peer (`$realip_remote_addr`), so visitor-supplied forwarded headers cannot choose a rate-limit identity. Nginx's root master reads these project config files; do not use the project as a static web root. If you previously installed this app's Cloudflare peer include, remove only `/etc/nginx/conf.d/afterlife-cloudflare-peer.conf` after confirming it belongs to this app. Inspect inherited `nginx -T` settings before changing anything. Keep port 4321 private and HTML/API/admin responses uncached.
+    Keep DNS **DNS only**. Nginx sends the fixed canonical host and HTTPS scheme to the loopback Node service. Its `X-Real-IP` uses the original socket peer (`$realip_remote_addr`), so visitor-supplied forwarded headers cannot choose a rate-limit identity. Nginx's root master reads these project config files; do not use the project as a static web root. Remove obsolete peer-restriction includes only after confirming they belong to this app. Inspect inherited `nginx -T` settings before changing anything. Keep port 4321 private and HTML/API/admin responses uncached.
 
 11. [ ] **Check HTTPS, renewal, and reader/admin flows.** Run:
 
