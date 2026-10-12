@@ -36,3 +36,5 @@ On 2026-10-09, the user requested chapter reading and survey pages match the hom
 On 2026-10-09, the user requested the mobile boxed number rating choices at every screen size. The 48px minimum-height outlined tiles now appear in one row of eleven on desktop, retaining six choices followed by five centered choices at 680px and below. Native radio selection, keyboard focus, endpoint labels, and explicit submission remain required.
 
 On 2026-10-09, the user requested a smaller chapter number label above each chapter title, then requested uppercase display as “CHAPTER X”. The label uses uppercase transformation of the existing 15px muted sans-serif style, with tabular numerals and an 8px gap before the title.
+
+On 2026-10-12, the user confirmed and authorized the reader close flow: a sticky header with a separated Close control on all reader-facing pages; a centered next-chapter reminder on chapter pages, a final-chapter message at the end, and generic copy elsewhere; warnings for unsubmitted responses; Close tab and Keep reading actions; manual recovery when browser closure is blocked. Administrator pages are excluded.

@@ -26,6 +26,7 @@ document.addEventListener('submit',async(event)=>{
     const response=await fetch(form.action,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(body)});
     const result=await response.json() as {error?:string;message:string;rating?:{score:number;version:number};results?:Results};
     if(!response.ok)throw new Error(result.error||'The form could not be saved. Please try again.');
+    if(form.dataset.action==='rating' && result.rating)document.dispatchEvent(new CustomEvent('rating-saved',{detail:String(result.rating.score)}));
     if(form.dataset.action==='rating' && result.rating && result.results){showResults(result.results);form.querySelector<HTMLInputElement>('[name=version]')!.value=String(result.rating.version);form.querySelector<HTMLInputElement>('[name=requestId]')!.value=crypto.randomUUID();document.querySelector('#saved-rating')!.textContent=`Your saved rating: ${result.rating.score} / 10. You can update it from this browser.`;button.textContent='Update rating';}
     else if(form.dataset.action==='report'){status.textContent=result.message;return;}
     else {if(form.dataset.action==='comment'){form.reset();form.querySelector<HTMLInputElement>('[name=requestId]')!.value=crypto.randomUUID();}await refreshComments();}

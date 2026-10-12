@@ -12,7 +12,7 @@ const id=integer(Astro.params.id,1,100000,'This chapter could not be found.');co
 const [data,rating,list,index]=await Promise.all([results(env.DB,id),ownRating(env.DB,id,Astro.locals.owner),comments(env.DB,id,Astro.locals.owner,Astro.url.searchParams.get('cursor')||undefined),chapters(env.DB)]);
 const position=index.findIndex(row=>row.id===id);const previous=index[position-1];const next=index[position+1];const local=isLocal(Astro.request,env);
 ---
-<Shell title={item.title}>
+<Shell title={item.title} chapterPage nextChapter={next}>
   <a href="/" class="back-link"><Arrow back />All chapters</a>
   <section class="chapter-rating" aria-labelledby="chapter-title"><p class="chapter-number">Chapter {item.id}</p><h1 id="chapter-title">{item.title}</h1><p class="reading-thanks">Thank you for reading.</p>
     <form id="rating-form" class="reader-form" method="post" action={`/api/chapters/${id}/rating`} data-action="rating"><fieldset><legend>{RATING_QUESTION}</legend><div class="score-choices">{Array.from({length:11},(_,score)=><label class="score-choice"><input type="radio" name="score" value={score} checked={rating?.score===score} required aria-label={`${score}${score===0?' — Not at all convincing':score===10?' — Extremely convincing':''}`} /><span>{score}</span></label>)}</div><div class="scale-endpoints"><span>0 — Not at all convincing</span><span>10 — Extremely convincing</span></div></fieldset>

@@ -14,3 +14,16 @@
 .chapter-rating .chapter-number{margin-bottom:8px;text-transform:uppercase}
 
 .site-header .site-name{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}.site-logo{display:block;width:32px;height:32px}
+
+/* Persistent reader controls and return-to-book dialog. */
+.reader-header{position:sticky;top:0;z-index:5;background:var(--surface)}
+.header-actions{display:flex;align-items:center;gap:16px}
+.close-reader{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;background:transparent;color:var(--muted);border-left:1px solid var(--line);border-radius:0}
+.close-reader:hover{background:var(--hover);color:var(--text);filter:none}
+.close-dialog{width:min(480px,calc(100% - 40px));max-height:calc(100dvh - 40px);overflow:auto;padding:32px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--text);text-align:center}
+.close-dialog::backdrop{background:rgb(0 0 0 / .45)}
+.close-dialog p{margin-top:20px;overflow-wrap:anywhere}
+.close-warning{color:var(--danger)}
+.close-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:28px}
+html{scroll-padding-top:80px}
+@media(max-width:680px){.header-actions{gap:8px}.reader-header{gap:8px}.close-reader{padding:0 8px}.close-dialog{padding:28px 20px}}

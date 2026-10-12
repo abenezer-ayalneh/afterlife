@@ -4,8 +4,9 @@ import '@fontsource/source-sans-3/latin-400.css';
 import '@fontsource/source-sans-3/latin-600.css';
 import '../styles/site.css';
 import {BOOK_TITLE} from '../lib/model';
-interface Props {title?:string;home?:boolean;narrow?:boolean}
-const {title,narrow=false}=Astro.props;
+interface Props {title?:string;home?:boolean;narrow?:boolean;chapterPage?:boolean;nextChapter?:{id:number;title:string}}
+const {title,narrow=false,chapterPage=false,nextChapter}=Astro.props;
+const readerPage=!Astro.url.pathname.startsWith('/admin');
 ---
 <!doctype html><html lang="en"><head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,12 +15,20 @@ const {title,narrow=false}=Astro.props;
   <script is:inline>(()=>{let t='system';try{t=localStorage.getItem('theme')||'system'}catch{}if(!['light','dark','system'].includes(t))t='system';document.documentElement.dataset.preference=t;document.documentElement.dataset.theme=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t})();</script>
 </head><body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <div class:list={['page-shell',{narrow}]}><header class="site-header"><a class="site-name" href="/" aria-label={`${BOOK_TITLE} — Home`}><img class="site-logo" src="/favicon.svg" width="32" height="32" alt="" /></a><div class="theme-control" role="group" aria-label="Color theme">
+  <div class:list={['page-shell',{narrow}]}><header class:list={['site-header',{'reader-header':readerPage}]}><a class="site-name" href="/" aria-label={`${BOOK_TITLE} — Home`}><img class="site-logo" src="/favicon.svg" width="32" height="32" alt="" /></a><div class="header-actions"><div class="theme-control" role="group" aria-label="Color theme">
     <button type="button" class="theme-option" data-theme-choice="light" aria-label="Light theme" aria-pressed="false" title="Light theme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" /></svg></button>
     <button type="button" class="theme-option" data-theme-choice="system" aria-label="System theme" aria-pressed="false" title="System theme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2" /><path d="M12 17v4m-4 0h8" /></svg></button>
     <button type="button" class="theme-option" data-theme-choice="dark" aria-label="Dark theme" aria-pressed="false" title="Dark theme"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.7 13.2A9 9 0 0 1 10.8 3.3 9 9 0 1 0 20.7 13.2Z" /></svg></button>
-  </div></header>
+  </div>{readerPage && <button type="button" class="close-reader" id="close-reader" aria-haspopup="dialog"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg><span>Close</span></button>}</div></header>
   <main id="main"><slot /></main><footer class="site-footer"><a href="/privacy">Privacy</a><span aria-hidden="true">|</span><a href="/guidelines">Commenting guidelines</a></footer></div>
+  {readerPage && <dialog id="close-dialog" class="close-dialog" aria-labelledby="close-title" aria-describedby="close-reminder close-warning close-fallback">
+    <h2 id="close-title">Return to your book</h2>
+    <p id="close-reminder">{chapterPage ? nextChapter ? `Next in the book: Chapter ${nextChapter.id} — ${nextChapter.title}` : 'You’ve reached the final chapter.' : 'Close this tab to return to your book.'}</p>
+    <p id="close-warning" class="close-warning" hidden>Your changes haven’t been submitted. Closing this tab will discard them.</p>
+    <p id="close-fallback" role="status" hidden>Your browser kept this tab open. Use your browser’s tab close button to close it.</p>
+    <div class="close-actions"><button type="button" id="confirm-close">Close tab</button><button type="button" class="secondary" id="keep-reading" autofocus>Keep reading</button></div>
+  </dialog>}
+  <script src="../scripts/close-reader.ts"></script>
   <script>
     const controls=document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]');const system=matchMedia('(prefers-color-scheme: dark)');
     function apply(t:string){document.documentElement.dataset.preference=t;document.documentElement.dataset.theme=t==='system'?(system.matches?'dark':'light'):t;controls.forEach(control=>control.setAttribute('aria-pressed',String(control.dataset.themeChoice===t)));try{localStorage.setItem('theme',t)}catch{}}

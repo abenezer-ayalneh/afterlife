@@ -245,3 +245,9 @@ Results pair large serif summary figures with an eleven-bin distribution using a
 - **Don't** rasterize interface text or controls into the artwork.
 - **Don't** introduce decorative shadows, animated flourishes, or a card grid in place of the established contents rows.
 - **Don't** turn rating results into evidence proving an afterlife or fabricate reader responses.
+
+## Reader close flow
+
+Reader-facing pages use a sticky, opaque header with a 44px minimum Close control at the far right, separated from the theme icons by a fine divider. Administrator headers retain their existing behavior. The centered native dialog uses the current theme, serif heading, and a black 45% backdrop. Keep reading receives initial focus; Escape dismisses the dialog and focus returns to Close.
+
+Chapter pages show the following chapter number and current title in book order, or a final-chapter message. Other reader pages show generic return-to-book copy. Unsubmitted ratings, comment drafts, and pending submissions produce a warning. Close tab attempts browser closure and shows manual closing instructions if the document remains open.
