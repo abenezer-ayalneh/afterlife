@@ -1,0 +1,16 @@
+---
+import { ACCESSIBLE_LABEL, MARK_PATH, MARK_STROKE_WIDTH, MARK_VIEW_BOX, PORTFOLIO_URL } from './shared/identity';
+import './web/signature.css';
+---
+<span class="aa-maker">
+  <a class="aa-maker__link" href={PORTFOLIO_URL} target="_blank" rel="noopener noreferrer" aria-label={ACCESSIBLE_LABEL}>
+    <span>Made by</span>
+    <svg class="aa-maker__mark" width="32" height="24" viewBox={MARK_VIEW_BOX} fill="none" aria-hidden="true" focusable="false">
+      <path d={MARK_PATH} stroke="currentColor" stroke-width={MARK_STROKE_WIDTH} stroke-linecap="square" stroke-linejoin="miter" />
+    </svg>
+  </a>
+</span>
+<script>
+  import { attachMakerTooltip } from './web/tooltip';
+  document.querySelectorAll<HTMLAnchorElement>('.aa-maker__link').forEach(attachMakerTooltip);
+</script>
